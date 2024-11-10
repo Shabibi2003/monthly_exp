@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Initialize the Database Connection
 def init_connection():
@@ -63,5 +64,19 @@ if not expenses_df.empty:
     # Display expenditure by category
     category_summary = expenses_df.groupby("category")["amount"].sum().reset_index()
     st.bar_chart(category_summary, x="category", y="amount")
+    
+    # Expenses over time graph
+    st.header("Expenses Over Time")
+    expenses_df['date'] = pd.to_datetime(expenses_df['date'])
+    expenses_over_time = expenses_df.groupby('date')['amount'].sum().reset_index()
+
+    # Plotting the expenses over time graph
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(expenses_over_time['date'], expenses_over_time['amount'], marker='o', color='tab:blue')
+    ax.set_title("Expenses Over Time", fontsize=14)
+    ax.set_xlabel("Date", fontsize=12)
+    ax.set_ylabel("Total Expenses", fontsize=12)
+    ax.grid(True)
+    st.pyplot(fig)
 else:
     st.write("No expenses recorded yet.")
