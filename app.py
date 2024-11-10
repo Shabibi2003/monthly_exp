@@ -5,11 +5,19 @@ import pandas as pd
 # Initialize the Database Connection
 def init_connection():
     return sqlite3.connect('expenses.db')
+
 def add_expense(date, category, description, amount):
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO expenses (date, category, description, amount) VALUES (?, ?, ?, ?)",
                    (date, category, description, amount))
+    conn.commit()
+    conn.close()
+
+def delete_all_expenses():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM expenses")  # Delete all rows in the expenses table
     conn.commit()
     conn.close()
 
@@ -29,6 +37,11 @@ with st.sidebar.form("expense_form"):
     if submit:
         add_expense(date, category, description, amount)
         st.sidebar.success("Expense added successfully!")
+
+# Button to delete all records in the database
+if st.sidebar.button("Delete All Records"):
+    delete_all_expenses()
+    st.sidebar.success("All records have been deleted!")
 
 def fetch_expenses():
     conn = init_connection()
@@ -50,3 +63,5 @@ if not expenses_df.empty:
     # Display expenditure by category
     category_summary = expenses_df.groupby("category")["amount"].sum().reset_index()
     st.bar_chart(category_summary, x="category", y="amount")
+else:
+    st.write("No expenses recorded yet.")
