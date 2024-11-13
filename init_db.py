@@ -2,7 +2,7 @@ import sqlite3
 
 def init_db():
     # Connect to the database file 'expenses.db'
-    conn = sqlite3.connect("D:\Monthly_exp\expenses.db")
+    conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
 
     # Create a table to store expenses
