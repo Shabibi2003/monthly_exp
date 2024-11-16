@@ -4,12 +4,17 @@ import pandas as pd
 
 # Function to connect to MySQL database
 def init_connection():
-    return mysql.connector.connect(
-        host="localhost",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
-        user="project",  # Replace with your MySQL username
-        password="Usman@9876",  # Replace with your MySQL password
-        database="month_data"  # Replace with your MySQL database name
-    )
+    try:
+        connection = mysql.connector.connect(
+            host="your_mysql_host",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
+            user="your_mysql_user",  # Replace with your MySQL username
+            password="your_mysql_password",  # Replace with your MySQL password
+            database="your_database_name"  # Replace with your MySQL database name
+        )
+        return connection
+    except mysql.connector.Error as err:
+        st.error(f"Error: {err}")
+        raise  # Re-raise the error after logging it
 
 # Function to initialize the database (create table if not exists)
 def init_db():
@@ -91,6 +96,17 @@ def app():
             st.dataframe(transactions_df)
     else:
         st.write("No transactions recorded yet.")
+
+# Function to delete an expense (not yet implemented in the original code)
+def delete_expense(transaction_id):
+    conn = init_connection()
+    cursor = conn.cursor()
+
+    # Delete the selected transaction from the database
+    cursor.execute("DELETE FROM expenses WHERE id = %s", (transaction_id,))
+    
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     app()
