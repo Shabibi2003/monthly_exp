@@ -3,8 +3,6 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import sqlite3
-
 def init_db():
     # Connect to the database file 'expenses.db'
     conn = sqlite3.connect("expenses.db")
@@ -17,7 +15,8 @@ def init_db():
             date TEXT NOT NULL,
             category TEXT NOT NULL,
             description TEXT,
-            amount REAL NOT NULL
+            amount REAL NOT NULL,
+            transaction_type TEXT NOT NULL
         )
     ''')
 
@@ -29,6 +28,7 @@ def init_db():
 if __name__ == "__main__":
     init_db()
     print("Database initialized and table created successfully!")
+
 # Initialize the Database Connection
 def init_connection():
     return sqlite3.connect('expenses.db')
@@ -37,29 +37,29 @@ def add_transaction(date, category, description, amount, transaction_type):
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO transactions (date, category, description, amount, transaction_type)
+        INSERT INTO expenses (date, category, description, amount, transaction_type)
         VALUES (?, ?, ?, ?, ?)
     """, (date, category, description, amount, transaction_type))
-    conn.commit()
-    conn.close()
+    conn.commit()  # Commit the changes
+    conn.close()   # Close the connection
 
 def delete_expense(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (transaction_id,))
     conn.commit()
     conn.close()
 
 def delete_all_expenses():
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions")  # Delete all rows in the transactions table
+    cursor.execute("DELETE FROM expenses")  # Delete all rows in the expenses table
     conn.commit()
     conn.close()
 
 def fetch_transactions():
     conn = init_connection()
-    transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
+    transactions_df = pd.read_sql_query("SELECT * FROM expenses", conn)  # Corrected to 'expenses' table
     conn.close()
     return transactions_df
 
@@ -68,7 +68,7 @@ def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
+        CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT,
             category TEXT,
@@ -100,6 +100,7 @@ with st.sidebar.form("transaction_form"):
     if submit:
         add_transaction(date, category, description, amount, transaction_type)
         st.sidebar.success(f"{transaction_type} added successfully!")
+        st.experimental_rerun()  # Refresh the page after adding a transaction
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
