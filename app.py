@@ -3,44 +3,32 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import sqlite3
-
-def init_db():
-    try:
-        # Connect to the database file 'expenses.db'
-        conn = sqlite3.connect("expenses.db")
-        cursor = conn.cursor()
-
-        # Create a table to store expenses
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS expenses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT NOT NULL,
-                category TEXT NOT NULL,
-                description TEXT,
-                amount REAL NOT NULL
-            )
-        ''')
-
-        # Save changes and close the connection
-        conn.commit()
-        print("Database initialized and table created successfully!")
-    except sqlite3.Error as e:
-        print(f"An error occurred: {e}")
-    finally:
-        # Close the connection
-        if conn:
-            conn.close()
-
-# Run the init_db function to create the database table
-if __name__ == "__main__":
-    init_db()
-
-
 # Initialize the Database Connection
 def init_connection():
     return sqlite3.connect('expenses.db')
 
+# Ensure table exists and has required columns
+def check_table_structure():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(expenses);")
+    columns = cursor.fetchall()
+    conn.close()
+    return columns
+
+def add_transaction_column():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("ALTER TABLE expenses ADD COLUMN transaction_type TEXT;")
+    conn.commit()
+    conn.close()
+
+# Ensure the 'transaction_type' column exists
+columns = check_table_structure()
+if not any(col[1] == "transaction_type" for col in columns):
+    add_transaction_column()
+
+# Function to add transaction to the database
 def add_transaction(date, category, description, amount, transaction_type):
     print(f"Adding transaction: {date}, {category}, {description}, {amount}, {transaction_type}")
     conn = init_connection()
@@ -53,47 +41,12 @@ def add_transaction(date, category, description, amount, transaction_type):
     conn.close()   # Close the connection
     print("Transaction added to database successfully.")
 
-def delete_expense(transaction_id):
-    conn = init_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses WHERE id = ?", (transaction_id,))
-    conn.commit()
-    conn.close()
-
-def delete_all_expenses():
-    conn = init_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses")  # Delete all rows in the expenses table
-    conn.commit()
-    conn.close()
-
+# Function to fetch all transactions
 def fetch_transactions():
     conn = init_connection()
-    transactions_df = pd.read_sql_query("SELECT * FROM expenses", conn)  # Corrected to 'expenses' table
+    transactions_df = pd.read_sql_query("SELECT * FROM expenses", conn)  # Fetch data
     conn.close()
     return transactions_df
-
-# Ensure table exists and has required columns
-def check_table_structure():
-    conn = sqlite3.connect("expenses.db")
-    cursor = conn.cursor()
-    cursor.execute("PRAGMA table_info(expenses);")
-    columns = cursor.fetchall()
-    conn.close()
-    return columns
-
-def add_transaction_column():
-    conn = sqlite3.connect("expenses.db")
-    cursor = conn.cursor()
-    cursor.execute("ALTER TABLE expenses ADD COLUMN transaction_type TEXT;")
-    conn.commit()
-    conn.close()
-
-# Ensure table exists and has the required columns
-columns = check_table_structure()
-# If 'transaction_type' column is missing, add it
-if not any(col[1] == "transaction_type" for col in columns):
-    add_transaction_column()
 
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
@@ -129,7 +82,6 @@ if not transactions_df.empty:
     st.header("Delete a Specific Transaction")
     selected_id = st.selectbox("Select Transaction ID to Delete", transactions_df["id"])
 
-    # Trigger deletion only when a valid ID is selected
     if st.button("Delete Selected Transaction"):
         delete_expense(selected_id)
         st.success(f"Transaction ID {selected_id} has been deleted!")
@@ -140,10 +92,7 @@ if not transactions_df.empty:
 
     # Display summary statistics
     st.header("Summary")
-    
-    # Check if 'transaction_type' exists in DataFrame columns
     if "transaction_type" in transactions_df.columns:
-        # Cash In and Cash Out calculation
         cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
         cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
         remaining_balance = cash_in - cash_out
@@ -163,7 +112,6 @@ if not transactions_df.empty:
     transactions_df['date'] = pd.to_datetime(transactions_df['date'])
     transactions_over_time = transactions_df.groupby('date')['amount'].sum().reset_index()
 
-    # Plotting the transactions over time graph
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(transactions_over_time['date'], transactions_over_time['amount'], marker='o', color='tab:blue')
     ax.set_title("Transactions Over Time", fontsize=14)
