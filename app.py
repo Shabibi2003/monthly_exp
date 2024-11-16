@@ -6,10 +6,10 @@ import pandas as pd
 def init_connection():
     try:
         connection = mysql.connector.connect(
-            host="your_mysql_host",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
-            user="your_mysql_user",  # Replace with your MySQL username
-            password="your_mysql_password",  # Replace with your MySQL password
-            database="your_database_name"  # Replace with your MySQL database name
+            host="https://monthlyexp-o67nvcwqw6u3sfazx88fsc.streamlit.app/",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
+            user="project",  # Replace with your MySQL username
+            password="Usman@9876",  # Replace with your MySQL password
+            database="month_data"  # Replace with your MySQL database name
         )
         return connection
     except mysql.connector.Error as err:
