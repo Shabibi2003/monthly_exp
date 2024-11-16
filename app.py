@@ -101,7 +101,6 @@ with st.sidebar.form("transaction_form"):
     if submit:
         add_transaction(date, category, description, amount, transaction_type)
         st.sidebar.success(f"{transaction_type} added successfully!")
-        st.experimental_rerun()  # Refresh the page after adding a transaction
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
