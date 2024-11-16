@@ -8,7 +8,7 @@ def init_db():
     conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
 
-    # Create a table to store expenses
+    # Create a table to store expenses if it doesn't exist
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,25 +63,26 @@ def fetch_transactions():
     conn.close()
     return transactions_df
 
-# Ensure table exists
-def create_table():
-    conn = init_connection()
+def check_table_structure():
+    conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS expenses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT,
-            category TEXT,
-            description TEXT,
-            amount REAL,
-            transaction_type TEXT
-        )
-    """)
+    cursor.execute("PRAGMA table_info(expenses);")
+    columns = cursor.fetchall()
+    conn.close()
+    return columns
+
+def add_transaction_column():
+    conn = sqlite3.connect("expenses.db")
+    cursor = conn.cursor()
+    cursor.execute("ALTER TABLE expenses ADD COLUMN transaction_type TEXT;")
     conn.commit()
     conn.close()
 
-# Create table if not exists
-create_table()
+# Ensure table exists and has required columns
+columns = check_table_structure()
+# If 'transaction_type' column is missing, add it
+if not any(col[1] == "transaction_type" for col in columns):
+    add_transaction_column()
 
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
