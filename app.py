@@ -7,45 +7,48 @@ import matplotlib.pyplot as plt
 def init_connection():
     return sqlite3.connect('expenses.db')
 
-def add_expense(date, category, description, amount):
+def add_transaction(date, category, description, amount, transaction_type):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO expenses (date, category, description, amount) VALUES (?, ?, ?, ?)",
-                   (date, category, description, amount))
+    cursor.execute("""
+        INSERT INTO transactions (date, category, description, amount, transaction_type)
+        VALUES (?, ?, ?, ?, ?)
+    """, (date, category, description, amount, transaction_type))
     conn.commit()
     conn.close()
 
-def delete_expense(expense_id):
+def delete_expense(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+    cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
     conn.commit()
     conn.close()
 
 def delete_all_expenses():
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses")  # Delete all rows in the expenses table
+    cursor.execute("DELETE FROM transactions")  # Delete all rows in the transactions table
     conn.commit()
     conn.close()
 
-def fetch_expenses():
+def fetch_transactions():
     conn = init_connection()
-    expenses_df = pd.read_sql_query("SELECT * FROM expenses", conn)
+    transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
     conn.close()
-    return expenses_df
+    return transactions_df
 
 # Ensure table exists
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS expenses (
+        CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT,
             category TEXT,
             description TEXT,
-            amount REAL
+            amount REAL,
+            transaction_type TEXT
         )
     """)
     conn.commit()
@@ -57,66 +60,74 @@ create_table()
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
 
-# Sidebar form for new expense
-st.sidebar.header("Add New Expense")
-with st.sidebar.form("expense_form"):
+# Sidebar form for new transaction (Cash In / Cash Out)
+st.sidebar.header("Add New Transaction")
+with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
-    category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Others"])
+    category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
-    submit = st.form_submit_button("Add Expense")
+    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+    submit = st.form_submit_button("Add Transaction")
 
     # Add data to the database
     if submit:
-        add_expense(date, category, description, amount)
-        st.sidebar.success("Expense added successfully!")
+        add_transaction(date, category, description, amount, transaction_type)
+        st.sidebar.success(f"{transaction_type} added successfully!")
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
     delete_all_expenses()
     st.sidebar.success("All records have been deleted!")
 
-# Display expenses
-st.header("Expenses Overview")
-expenses_df = fetch_expenses()
+# Display transactions
+st.header("Transactions Overview")
+transactions_df = fetch_transactions()
 
-if not expenses_df.empty:
-    st.dataframe(expenses_df)
+if not transactions_df.empty:
+    st.dataframe(transactions_df)
 
-    # Deleting a specific expense
-    st.header("Delete a Specific Expense")
-    selected_id = st.selectbox("Select Expense ID to Delete", expenses_df["id"])
+    # Deleting a specific transaction
+    st.header("Delete a Specific Transaction")
+    selected_id = st.selectbox("Select Transaction ID to Delete", transactions_df["id"])
 
     # Trigger deletion only when a valid ID is selected
-    if st.button("Delete Selected Expense"):
+    if st.button("Delete Selected Transaction"):
         delete_expense(selected_id)
-        st.success(f"Expense ID {selected_id} has been deleted!")
+        st.success(f"Transaction ID {selected_id} has been deleted!")
 
         # Fetch updated data and refresh UI
-        expenses_df = fetch_expenses()
-        st.dataframe(expenses_df)
+        transactions_df = fetch_transactions()
+        st.dataframe(transactions_df)
 
     # Display summary statistics
     st.header("Summary")
-    total_expense = expenses_df["amount"].sum()
-    st.write(f"Total Monthly Expense: ₹{total_expense}")
+    
+    # Cash In and Cash Out calculation
+    cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
+    cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+    remaining_balance = cash_in - cash_out
+
+    st.write(f"Total Cash In: ₹{cash_in}")
+    st.write(f"Total Cash Out: ₹{cash_out}")
+    st.write(f"Remaining Balance: ₹{remaining_balance}")
 
     # Display expenditure by category
-    category_summary = expenses_df.groupby("category")["amount"].sum().reset_index()
+    category_summary = transactions_df.groupby("category")["amount"].sum().reset_index()
     st.bar_chart(category_summary, x="category", y="amount")
     
-    # Expenses over time graph
-    st.header("Expenses Over Time")
-    expenses_df['date'] = pd.to_datetime(expenses_df['date'])
-    expenses_over_time = expenses_df.groupby('date')['amount'].sum().reset_index()
+    # Transactions over time graph
+    st.header("Transactions Over Time")
+    transactions_df['date'] = pd.to_datetime(transactions_df['date'])
+    transactions_over_time = transactions_df.groupby('date')['amount'].sum().reset_index()
 
-    # Plotting the expenses over time graph
+    # Plotting the transactions over time graph
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(expenses_over_time['date'], expenses_over_time['amount'], marker='o', color='tab:blue')
-    ax.set_title("Expenses Over Time", fontsize=14)
+    ax.plot(transactions_over_time['date'], transactions_over_time['amount'], marker='o', color='tab:blue')
+    ax.set_title("Transactions Over Time", fontsize=14)
     ax.set_xlabel("Date", fontsize=12)
-    ax.set_ylabel("Total Expenses", fontsize=12)
+    ax.set_ylabel("Amount", fontsize=12)
     ax.grid(True)
     st.pyplot(fig)
 else:
-    st.write("No expenses recorded yet.")
+    st.write("No transactions recorded yet.")
