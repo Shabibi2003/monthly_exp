@@ -130,14 +130,18 @@ if not transactions_df.empty:
     # Display summary statistics
     st.header("Summary")
     
-    # Cash In and Cash Out calculation
-    cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
-    cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-    remaining_balance = cash_in - cash_out
+    # Check if 'transaction_type' exists in DataFrame columns
+    if "transaction_type" in transactions_df.columns:
+        # Cash In and Cash Out calculation
+        cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
+        cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+        remaining_balance = cash_in - cash_out
 
-    st.write(f"Total Cash In: ₹{cash_in}")
-    st.write(f"Total Cash Out: ₹{cash_out}")
-    st.write(f"Remaining Balance: ₹{remaining_balance}")
+        st.write(f"Total Cash In: ₹{cash_in}")
+        st.write(f"Total Cash Out: ₹{cash_out}")
+        st.write(f"Remaining Balance: ₹{remaining_balance}")
+    else:
+        st.error("Transaction type column is missing.")
 
     # Display expenditure by category
     category_summary = transactions_df.groupby("category")["amount"].sum().reset_index()
