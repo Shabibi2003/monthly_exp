@@ -15,12 +15,25 @@ def add_expense(date, category, description, amount):
     conn.commit()
     conn.close()
 
+def delete_expense(expense_id):
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+    conn.commit()
+    conn.close()
+
 def delete_all_expenses():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM expenses")  # Delete all rows in the expenses table
     conn.commit()
     conn.close()
+
+def fetch_expenses():
+    conn = init_connection()
+    expenses_df = pd.read_sql_query("SELECT * FROM expenses", conn)
+    conn.close()
+    return expenses_df
 
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
@@ -44,20 +57,23 @@ if st.sidebar.button("Delete All Records"):
     delete_all_expenses()
     st.sidebar.success("All records have been deleted!")
 
-def fetch_expenses():
-    conn = init_connection()
-    expenses_df = pd.read_sql_query("SELECT * FROM expenses", conn)
-    conn.close()
-    return expenses_df
-
 # Display expenses
 st.header("Expenses Overview")
 expenses_df = fetch_expenses()
-st.dataframe(expenses_df)
 
-# Display summary statistics
-st.header("Summary")
 if not expenses_df.empty:
+    st.dataframe(expenses_df)
+
+    # Deleting a specific expense
+    st.header("Delete a Specific Expense")
+    selected_id = st.selectbox("Select Expense ID to Delete", expenses_df["id"])
+    if st.button("Delete Selected Expense"):
+        delete_expense(selected_id)
+        st.success(f"Expense ID {selected_id} has been deleted!")
+        st.experimental_rerun()
+
+    # Display summary statistics
+    st.header("Summary")
     total_expense = expenses_df["amount"].sum()
     st.write(f"Total Monthly Expense: ₹{total_expense}")
 
