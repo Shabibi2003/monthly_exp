@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def init_db():
     # Connect to the database file 'expenses.db'
-    conn = sqlite3.connect("expenses.db")
+    conn = sqlite3.connect("expenses.sqlite")
     cursor = conn.cursor()
 
     # Create a table to store expenses if it doesn't exist
