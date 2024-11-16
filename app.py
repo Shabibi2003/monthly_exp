@@ -3,37 +3,38 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# def init_db():
-#     # Connect to the database file 'expenses.db'
-#     conn = sqlite3.connect("expenses.db")
-#     cursor = conn.cursor()
+def init_db():
+    # Connect to the database file 'expenses.db'
+    conn = sqlite3.connect("expenses.db")
+    cursor = conn.cursor()
 
-#     # Create a table to store expenses if it doesn't exist
-#     cursor.execute('''
-#         CREATE TABLE IF NOT EXISTS expenses (
-#             id INTEGER PRIMARY KEY AUTOINCREMENT,
-#             date TEXT NOT NULL,
-#             category TEXT NOT NULL,
-#             description TEXT,
-#             amount REAL NOT NULL,
-#             transaction_type TEXT NOT NULL
-#         )
-#     ''')
+    # Create a table to store expenses if it doesn't exist
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS expenses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            category TEXT NOT NULL,
+            description TEXT,
+            amount REAL NOT NULL,
+            transaction_type TEXT NOT NULL
+        )
+    ''')
 
-#     # Save changes and close the connection
-#     conn.commit()
-#     conn.close()
+    # Save changes and close the connection
+    conn.commit()
+    conn.close()
 
-# # Run the init_db function to create the database table
-# if __name__ == "__main__":
-#     init_db()
-#     print("Database initialized and table created successfully!")
+# Run the init_db function to create the database table
+if __name__ == "__main__":
+    init_db()
+    print("Database initialized and table created successfully!")
 
 # Initialize the Database Connection
 def init_connection():
     return sqlite3.connect('expenses.db')
 
 def add_transaction(date, category, description, amount, transaction_type):
+    print(f"Adding transaction: {date}, {category}, {description}, {amount}, {transaction_type}")
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -42,6 +43,7 @@ def add_transaction(date, category, description, amount, transaction_type):
     """, (date, category, description, amount, transaction_type))
     conn.commit()  # Commit the changes
     conn.close()   # Close the connection
+    print("Transaction added to database successfully.")
 
 def delete_expense(transaction_id):
     conn = init_connection()
@@ -63,6 +65,7 @@ def fetch_transactions():
     conn.close()
     return transactions_df
 
+# Ensure table exists and has required columns
 def check_table_structure():
     conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
@@ -78,7 +81,7 @@ def add_transaction_column():
     conn.commit()
     conn.close()
 
-# Ensure table exists and has required columns
+# Ensure table exists and has the required columns
 columns = check_table_structure()
 # If 'transaction_type' column is missing, add it
 if not any(col[1] == "transaction_type" for col in columns):
