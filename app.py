@@ -35,6 +35,25 @@ def fetch_expenses():
     conn.close()
     return expenses_df
 
+# Ensure table exists
+def create_table():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS expenses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT,
+            category TEXT,
+            description TEXT,
+            amount REAL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+# Create table if not exists
+create_table()
+
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
 
@@ -67,10 +86,15 @@ if not expenses_df.empty:
     # Deleting a specific expense
     st.header("Delete a Specific Expense")
     selected_id = st.selectbox("Select Expense ID to Delete", expenses_df["id"])
+
+    # Trigger deletion only when a valid ID is selected
     if st.button("Delete Selected Expense"):
         delete_expense(selected_id)
         st.success(f"Expense ID {selected_id} has been deleted!")
-        st.experimental_rerun()
+
+        # Fetch updated data and refresh UI
+        expenses_df = fetch_expenses()
+        st.dataframe(expenses_df)
 
     # Display summary statistics
     st.header("Summary")
