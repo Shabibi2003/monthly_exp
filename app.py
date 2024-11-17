@@ -1,7 +1,8 @@
+import streamlit as st
 import mysql.connector
 from mysql.connector import Error
 
-# Establishing the connection
+# Function to establish the MySQL connection
 def create_connection():
     try:
         # Connect to MySQL server
@@ -13,10 +14,9 @@ def create_connection():
         )
         
         if connection.is_connected():
-            print("Successfully connected to the database")
             return connection
     except Error as err:
-        print(f"Error: {err}")
+        st.error(f"Error: {err}")
         return None
 
 # Create table if it doesn't exist
@@ -24,7 +24,7 @@ def create_table():
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
-        cursor.execute('''
+        cursor.execute(''' 
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100),
@@ -32,7 +32,6 @@ def create_table():
             )
         ''')
         connection.commit()
-        print("Table created successfully or already exists.")
         connection.close()
 
 # Insert data into table
@@ -45,24 +44,44 @@ def insert_data(name, age):
             VALUES (%s, %s)
         ''', (name, age))
         connection.commit()
-        print(f"Data inserted: {name}, {age}")
         connection.close()
 
 # Fetch data from table
 def fetch_data():
     connection = create_connection()
+    data = []
     if connection:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users")
         rows = cursor.fetchall()
         for row in rows:
-            print(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")
+            data.append({"ID": row[0], "Name": row[1], "Age": row[2]})
         connection.close()
+    return data
 
-# Example usage
-if __name__ == "__main__":
-    create_table()  # Create table
-    insert_data("John Doe", 30)  # Insert a record
-    insert_data('Yousf',21)
-    insert_data('Yousf',21)
-    fetch_data()  # Fetch and display all records
+# Streamlit UI
+st.title("MySQL Data Insertion and Display")
+
+# Create table if it doesn't exist
+create_table()
+
+# User input for name and age
+st.subheader("Insert Data")
+name = st.text_input("Name")
+age = st.number_input("Age", min_value=1, max_value=120)
+
+if st.button("Insert Data"):
+    if name and age:
+        insert_data(name, age)
+        st.success(f"Data inserted: {name}, {age}")
+    else:
+        st.warning("Please fill in both fields.")
+
+# Display the data from the database
+st.subheader("Database Records")
+data = fetch_data()
+
+if data:
+    st.write(data)
+else:
+    st.warning("No data available.")
