@@ -1,21 +1,21 @@
+import pandas as pd
 import mysql.connector
 import streamlit as st
-import pandas as pd
 
-# Function to connect to MySQL database
+# Example function with proper try-except
 def init_connection():
-   try:
-    connection = mysql.connector.connect(
-        host="127.0.0.1",
-        user="project",
-        password="Usman@9876",
-        database="expenses",
-        port=3306
-    )
-    print("Connection successful!")
-    connection.close()
-except mysql.connector.Error as err:
-    print(f"Error: {err}")
+    try:
+        connection = mysql.connector.connect(
+            host="127.0.0.1",         # Replace with your server's IP if needed
+            user="project",           # Your MySQL username
+            password="Usman@9876", # Your MySQL password
+            database="expenses" # Your database name
+        )
+        return connection
+    except mysql.connector.Error as err:
+        # Handle connection errors
+        st.error(f"Database connection failed: {err}")
+        return None
 
 
 
