@@ -4,17 +4,20 @@ import pandas as pd
 
 # Function to connect to MySQL database
 def init_connection():
-    try:
-        connection = mysql.connector.connect(
-            host="localhost",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
-            user="user1",  # Replace with your MySQL username
-            password="Usman@9876",  # Replace with your MySQL password
-            database="expenses"  # Replace with your MySQL database name
-        )
-        return connection
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
-        raise  # Re-raise the error after logging it
+   try:
+    connection = mysql.connector.connect(
+        host="127.0.0.1",
+        user="project",
+        password="Usman@9876",
+        database="expenses",
+        port=3306
+    )
+    print("Connection successful!")
+    connection.close()
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
+
+
 
 # Function to initialize the database (create table if not exists)
 def init_db():
