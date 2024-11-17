@@ -7,9 +7,9 @@ def init_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",  # Replace with your MySQL host (e.g., 'localhost' for local or the cloud server's address)
-            user="project",  # Replace with your MySQL username
+            user="user1",  # Replace with your MySQL username
             password="Usman@9876",  # Replace with your MySQL password
-            database="month_data"  # Replace with your MySQL database name
+            database="expenses"  # Replace with your MySQL database name
         )
         return connection
     except mysql.connector.Error as err:
