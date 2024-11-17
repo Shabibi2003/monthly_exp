@@ -9,7 +9,7 @@ def create_connection():
             host="127.0.0.1",  # MySQL server address (localhost in this case)
             user="root",        # Your MySQL username
             password="Usman@9876",  # Your MySQL password
-            database="example_db"  # The database you want to connect to
+            database="expenses_db"  # The database you want to connect to
         )
         
         if connection.is_connected():
