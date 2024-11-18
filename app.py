@@ -1,60 +1,140 @@
-import mysql.connector
 import streamlit as st
+import mysql.connector
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# Function to establish the MySQL connection
-def create_connection():
-    try:
-        connection = mysql.connector.connect(
-            host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
-            port=4000,  # TiDB Cloud port
-            user="nVBqARTHPX1yFUJ.root",
-            password="L9Rs0LXsGYRYZyIE",
-            database="fortune500",
-            ssl_ca="ca-cert.pem"  # Path to the SSL certificate
+# Function to establish the MySQL (TiDB) connection
+def init_connection():
+    return mysql.connector.connect(
+        host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",  # TiDB Cloud host
+        port=4000,  # TiDB Cloud port
+        user="nVBqARTHPX1yFUJ.root",  # Your TiDB Cloud username
+        password="L9Rs0LXsGYRYZyIE",  # Your TiDB Cloud password
+        database="fortune500",  # Your TiDB Cloud database name
+        ssl_ca="ca-cert.pem"  # Path to the SSL certificate
+    )
+
+def add_transaction(date, category, description, amount, transaction_type):
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO transactions (date, category, description, amount, transaction_type)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (date, category, description, amount, transaction_type))
+    conn.commit()
+    conn.close()
+
+def delete_expense(transaction_id):
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
+    conn.commit()
+    conn.close()
+
+def delete_all_expenses():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM transactions")  # Delete all rows in the transactions table
+    conn.commit()
+    conn.close()
+
+def fetch_transactions():
+    conn = init_connection()
+    transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
+    conn.close()
+    return transactions_df
+
+# Ensure table exists
+def create_table():
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            date DATE,
+            category VARCHAR(100),
+            description VARCHAR(255),
+            amount DECIMAL(10, 2),
+            transaction_type VARCHAR(50)
         )
-        if connection.is_connected():
-            return connection
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
-        return None
+    """)
+    conn.commit()
+    conn.close()
 
-# Insert data into the database
-def insert_data(name, age):
-    connection = create_connection()
-    if connection:
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO users (name, age) VALUES (%s, %s)", (name, age))
-        connection.commit()
-        connection.close()
-        st.success(f"Data inserted: {name}, {age}")
+# Create table if not exists
+create_table()
 
-# Fetch data from the database
-def fetch_data():
-    connection = create_connection()
-    if connection:
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users")
-        data = cursor.fetchall()
-        connection.close()
-        return data
+# Streamlit app title
+st.title("Monthly Expenditure Tracker")
 
-# Streamlit UI
-st.title("TiDB Cloud with Streamlit")
+# Sidebar form for new transaction (Cash In / Cash Out)
+st.sidebar.header("Add New Transaction")
+with st.sidebar.form("transaction_form"):
+    date = st.date_input("Date")
+    category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
+    description = st.text_input("Description")
+    amount = st.number_input("Amount", min_value=0.0, step=0.01)
+    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+    submit = st.form_submit_button("Add Transaction")
 
-# Insert data section
-st.subheader("Insert Data")
-name = st.text_input("Name")
-age = st.number_input("Age", min_value=1, max_value=120)
-if st.button("Insert"):
-    if name and age:
-        insert_data(name, age)
-    else:
-        st.warning("Please provide both name and age.")
+    # Add data to the database
+    if submit:
+        add_transaction(date, category, description, amount, transaction_type)
+        st.sidebar.success(f"{transaction_type} added successfully!")
 
-# # Display data section
-# st.subheader("Database Records")
-# data = fetch_data()
-# if data:
-#     st.write(data)
-# else:
-#     st.warning("No data found.")
+# Button to delete all records in the database
+if st.sidebar.button("Delete All Records"):
+    delete_all_expenses()
+    st.sidebar.success("All records have been deleted!")
+
+# Display transactions
+st.header("Transactions Overview")
+transactions_df = fetch_transactions()
+
+if not transactions_df.empty:
+    st.dataframe(transactions_df)
+
+    # Deleting a specific transaction
+    st.header("Delete a Specific Transaction")
+    selected_id = st.selectbox("Select Transaction ID to Delete", transactions_df["id"])
+
+    # Trigger deletion only when a valid ID is selected
+    if st.button("Delete Selected Transaction"):
+        delete_expense(selected_id)
+        st.success(f"Transaction ID {selected_id} has been deleted!")
+
+        # Fetch updated data and refresh UI
+        transactions_df = fetch_transactions()
+        st.dataframe(transactions_df)
+
+    # Display summary statistics
+    st.header("Summary")
+    
+    # Cash In and Cash Out calculation
+    cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
+    cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+    remaining_balance = cash_in - cash_out
+
+    st.write(f"Total Cash In: ₹{cash_in}")
+    st.write(f"Total Cash Out: ₹{cash_out}")
+    st.write(f"Remaining Balance: ₹{remaining_balance}")
+
+    # Display expenditure by category
+    category_summary = transactions_df.groupby("category")["amount"].sum().reset_index()
+    st.bar_chart(category_summary, x="category", y="amount")
+    
+    # Transactions over time graph
+    st.header("Transactions Over Time")
+    transactions_df['date'] = pd.to_datetime(transactions_df['date'])
+    transactions_over_time = transactions_df.groupby('date')['amount'].sum().reset_index()
+
+    # Plotting the transactions over time graph
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(transactions_over_time['date'], transactions_over_time['amount'], marker='o', color='tab:blue')
+    ax.set_title("Transactions Over Time", fontsize=14)
+    ax.set_xlabel("Date", fontsize=12)
+    ax.set_ylabel("Amount", fontsize=12)
+    ax.grid(True)
+    st.pyplot(fig)
+else:
+    st.write("No transactions recorded yet.")
