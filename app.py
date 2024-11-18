@@ -1,25 +1,41 @@
 import streamlit as st
 import mysql.connector
+import toml
 from mysql.connector import Error
 
-# Using the website URL of your MySQL server
-
-# Reading data
+# Reading MySQL credentials from secrets.toml
 toml_data = toml.load("secrets.toml")
-# saving each credential into a variable
 HOST_NAME = toml_data['mysql']['host']
 DATABASE = toml_data['mysql']['database']
 PASSWORD = toml_data['mysql']['password']
 USER = toml_data['mysql']['user']
 PORT = toml_data['mysql']['port']
 
-mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
+# Function to establish the MySQL connection
+def create_connection():
+    try:
+        # Use mysql.connector to connect to MySQL server
+        connection = mysql.connector.connect(
+            host=HOST_NAME,  # Use host from secrets.toml
+            database=DATABASE,  # Use database from secrets.toml
+            user=USER,  # Use user from secrets.toml
+            password=PASSWORD,  # Use password from secrets.toml
+            port=PORT,  # Use port from secrets.toml (optional)
+            use_pure=True
+        )
+        
+        if connection.is_connected():
+            return connection
+    except Error as err:
+        st.error(f"Error: {err}")
+        return None
 
+# Create table if it doesn't exist
 def create_table():
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
-        cursor.execute(''' 
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100),
@@ -34,7 +50,7 @@ def insert_data(name, age):
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
-        cursor.execute(''' 
+        cursor.execute('''
             INSERT INTO users (name, age)
             VALUES (%s, %s)
         ''', (name, age))
