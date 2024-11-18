@@ -1,25 +1,16 @@
 import streamlit as st
 import mysql.connector
 from mysql.connector import Error
-import os
-
-HOST_NAME = st.secrets["mysql"]["host"]
-DATABASE = st.secrets["mysql"]["database"]
-PASSWORD = st.secrets["mysql"]["password"]
-USER = st.secrets["mysql"]["user"]
-PORT = st.secrets["mysql"]["port"]
 
 # Function to establish the MySQL connection
 def create_connection():
     try:
-        # Use mysql.connector to connect to MySQL server
+        # Connect to MySQL server
         connection = mysql.connector.connect(
-            host=HOST_NAME,  # Use host from secrets
-            database=DATABASE,  # Use database from secrets
-            user=USER,  # Use user from secrets
-            password=PASSWORD,  # Use password from secrets
-            port=PORT,  # Use port from secrets
-            use_pure=True
+            host="127.0.0.1",  # MySQL server address (localhost in this case)
+            user="project",        # Your MySQL username
+            password="Usman@9876",  # Your MySQL password
+            database="expenses"  # The database you want to connect to
         )
         
         if connection.is_connected():
@@ -33,7 +24,7 @@ def create_table():
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
-        cursor.execute('''
+        cursor.execute(''' 
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100),
@@ -87,10 +78,10 @@ if st.button("Insert Data"):
         st.warning("Please fill in both fields.")
 
 # Display the data from the database
-st.subheader("Database Records")
-data = fetch_data()
+# st.subheader("Database Records")
+# data = fetch_data()
 
-if data:
-    st.write(data)
-else:
-    st.warning("No data available.")
+# if data:
+#     st.write(data)
+# else:
+#     st.warning("No data available.")
