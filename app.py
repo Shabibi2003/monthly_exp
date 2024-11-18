@@ -16,13 +16,13 @@ def init_connection():
         ssl_ca="ca-cert.pem"  # Path to the SSL certificate
     )
 
-def add_transaction(date_time, category, description, amount, transaction_type):
+def add_transaction(date_time, category, description, amount, transaction_type, payment_method):
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        INSERT INTO transactions (date_time, category, description, amount, transaction_type)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (date_time, category, description, amount, transaction_type))
+        INSERT INTO transactions (date_time, category, description, amount, transaction_type, payment_method)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (date_time, category, description, amount, transaction_type, payment_method))
     conn.commit()
     conn.close()
 
@@ -57,7 +57,8 @@ def create_table():
             category VARCHAR(100),
             description VARCHAR(255),
             amount DECIMAL(10, 2),
-            transaction_type VARCHAR(50)
+            transaction_type VARCHAR(50),
+            payment_method VARCHAR(50)  -- Added column for payment method
         )
     """)
     conn.commit()
@@ -84,28 +85,20 @@ with st.sidebar.form("transaction_form"):
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
     
+    # Dropdown for Cash In / Cash Out selection
+    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+    
+    # Dropdown for payment method selection (Cash or Online)
+    payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+
     submit = st.form_submit_button("Add Transaction")
 
-# Set default transaction type as None initially
-transaction_type = None
-
-# Buttons for selecting the transaction type
-st.sidebar.header("Select Transaction Type")
-if st.sidebar.button("Add Cash In"):
-    transaction_type = "Cash In"
-elif st.sidebar.button("Add Cash Out"):
-    transaction_type = "Cash Out"
-elif st.sidebar.button("Add Online"):
-    transaction_type = "Online"
-elif st.sidebar.button("Add Cash"):
-    transaction_type = "Cash"
-
-# Add data to the database when the form is submitted and transaction type is set
-if submit and transaction_type:
+# Add data to the database when the form is submitted
+if submit:
     # Combine date and time into a single datetime string
     date_time = f"{date} {time}"
-    add_transaction(date_time, category, description, amount, transaction_type)
-    st.sidebar.success(f"{transaction_type} added successfully at {date_time}!")
+    add_transaction(date_time, category, description, amount, transaction_type, payment_method)
+    st.sidebar.success(f"{transaction_type} ({payment_method}) added successfully at {date_time}!")
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
@@ -138,8 +131,8 @@ if not transactions_df.empty:
     # Cash In, Cash Out, Online, and Cash calculation
     cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
     cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-    online = transactions_df[transactions_df["transaction_type"] == "Online"]["amount"].sum()
-    cash = transactions_df[transactions_df["transaction_type"] == "Cash"]["amount"].sum()
+    online = transactions_df[transactions_df["payment_method"] == "Online"]["amount"].sum()
+    cash = transactions_df[transactions_df["payment_method"] == "Cash"]["amount"].sum()
     remaining_balance = cash_in - cash_out + online - cash
 
     st.write(f"Total Cash In: ₹{cash_in}")
