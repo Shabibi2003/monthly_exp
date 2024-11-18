@@ -18,12 +18,11 @@ def init_connection():
 def add_transaction(date, time, category, description, amount, transaction_type):
     conn = init_connection()
     cursor = conn.cursor()
-    # Combine date and time into a datetime format
-    transaction_datetime = f"{date} {time}"
+    # Store the transaction date and time separately
     cursor.execute(""" 
-        INSERT INTO transactions (date, category, description, amount, transaction_type)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (transaction_datetime, category, description, amount, transaction_type))
+        INSERT INTO transactions (date, time, category, description, amount, transaction_type)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (date, time, category, description, amount, transaction_type))
     conn.commit()
     conn.close()
 
@@ -47,14 +46,15 @@ def fetch_transactions():
     conn.close()
     return transactions_df
 
-# Ensure table exists
+# Ensure table exists with a separate time column
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
         CREATE TABLE IF NOT EXISTS transactions (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            date DATETIME,
+            date DATE,
+            time TIME,
             category VARCHAR(100),
             description VARCHAR(255),
             amount DECIMAL(10, 2),
