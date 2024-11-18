@@ -8,14 +8,15 @@ import pytz
 # Function to establish the MySQL (TiDB) connection
 def init_connection():
     return mysql.connector.connect(
-        host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",  # TiDB Cloud host
-        port=4000,  # TiDB Cloud port
-        user="nVBqARTHPX1yFUJ.root",  # Your TiDB Cloud username
-        password="L9Rs0LXsGYRYZyIE",  # Your TiDB Cloud password
-        database="fortune500",  # Your TiDB Cloud database name
-        ssl_ca="ca-cert.pem"  # Path to the SSL certificate
+        host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+        port=4000,
+        user="nVBqARTHPX1yFUJ.root",
+        password="L9Rs0LXsGYRYZyIE",
+        database="fortune500",
+        ssl_ca="ca-cert.pem"
     )
 
+# Function to add a transaction
 def add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method):
     conn = init_connection()
     cursor = conn.cursor()
@@ -26,20 +27,14 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn.commit()
     conn.close()
 
-def delete_expense(transaction_id):
-    conn = init_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
-    conn.commit()
-    conn.close()
-
+# Function to fetch all transactions
 def fetch_transactions():
     conn = init_connection()
     transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
     conn.close()
     return transactions_df
 
-# Ensure table exists with the added sub_category column
+# Ensure table exists with updated schema
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
@@ -51,7 +46,7 @@ def create_table():
             description VARCHAR(255),
             amount DECIMAL(10, 2),
             transaction_type VARCHAR(50),
-            sub_category VARCHAR(50),  -- Added column for sub-category
+            sub_category VARCHAR(50),
             payment_method VARCHAR(50)
         )
     """)
@@ -69,105 +64,87 @@ st.sidebar.header("Add New Transaction")
 with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
     
-    # Get the current time in the local timezone (India Standard Time)
-    local_timezone = pytz.timezone("Asia/Kolkata")  # Adjust the timezone as needed
-    current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Current time in HH:MM:SS format
+    # Get the current time in the local timezone
+    local_timezone = pytz.timezone("Asia/Kolkata")
+    current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
+    time = st.text_input("Time", current_time)
     
-    # Time input field with default as current time
-    time = st.text_input("Time", current_time)  # Display the current time in the input box
     category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
-    
-    # Dropdown for Transaction Type (Main categories)
     transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
     
-    # Sub-categories for Transaction Type
+    # Subcategory selection based on transaction type
     if transaction_type == "Cash Out":
-        sub_category = st.selectbox("Sub Category", ["Monthly Expenses", "Monthly Savings", "Others"])
+        sub_category = st.selectbox("Sub-Category", ["Monthly Expenses", "Other Expenses"])
     else:
-        sub_category = "N/A"  # No sub-category for Cash In
+        sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
     
-    # Dropdown for payment method selection (Cash or Online)
     payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
-
     submit = st.form_submit_button("Add Transaction")
 
-# Add data to the database when the form is submitted
+# Add transaction to database when form is submitted
 if submit:
-    # Combine date and time into a single datetime string
     date_time = f"{date} {time}"
     add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
-    st.sidebar.success(f"{transaction_type} ({payment_method}) added successfully at {date_time}!")
+    st.sidebar.success(f"Transaction added successfully: {transaction_type} ({sub_category}) at {date_time}!")
 
-# Create a two-column layout
+# Fetch transactions
+transactions_df = fetch_transactions()
+
+# UI Layout with two columns
+st.header("Overview")
 col1, col2 = st.columns(2)
 
-# Left side (Overall data)
+# Column 1: Overall data
 with col1:
-    st.header("Transactions Overview")
-    transactions_df = fetch_transactions()
-
+    st.subheader("Overall Data")
     if not transactions_df.empty:
         st.dataframe(transactions_df)
-
-        # Deleting a specific transaction
-        st.header("Delete a Specific Transaction")
-        selected_id = st.selectbox("Select Transaction ID to Delete", transactions_df["id"])
-
-        # Trigger deletion only when a valid ID is selected
-        if st.button("Delete Selected Transaction"):
-            delete_expense(selected_id)
-            st.success(f"Transaction ID {selected_id} has been deleted!")
-
-            # Fetch updated data and refresh UI
-            transactions_df = fetch_transactions()
-            st.dataframe(transactions_df)
-
-        # Display summary statistics
-        st.header("Summary")
-        
-        # Cash In, Cash Out, Online, and Cash calculation
-        cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
-        cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-        online = transactions_df[transactions_df["payment_method"] == "Online"]["amount"].sum()
-        cash = transactions_df[transactions_df["payment_method"] == "Cash"]["amount"].sum()
-        remaining_balance = cash_in - cash_out 
-
-        st.write(f"Total Cash In: ₹{cash_in}")
-        st.write(f"Total Cash Out: ₹{cash_out}")
-        st.write(f"Total Online Transactions: ₹{online}")
-        st.write(f"Total Cash Transactions: ₹{cash}")
-        st.write(f"Remaining Balance: ₹{remaining_balance}")
-
-        # Display expenditure by category
-        category_summary = transactions_df.groupby("category")["amount"].sum().reset_index()
-        st.bar_chart(category_summary, x="category", y="amount")
-        
-        # Transactions over time graph
-        st.header("Transactions Over Time")
-        transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
-        transactions_over_time = transactions_df.groupby('date_time')['amount'].sum().reset_index()
-
-        # Plotting the transactions over time graph
-        fig, ax = plt.subplots(figsize=(10, 5))
-        ax.plot(transactions_over_time['date_time'], transactions_over_time['amount'], marker='o', color='tab:blue')
-        ax.set_title("Transactions Over Time", fontsize=14)
-        ax.set_xlabel("Date", fontsize=12)
-        ax.set_ylabel("Amount", fontsize=12)
-        ax.grid(True)
-        st.pyplot(fig)
     else:
         st.write("No transactions recorded yet.")
 
-# Right side (Sum of Monthly Savings)
+# Column 2: Monthly Savings
 with col2:
-    st.header("Monthly Savings Summary")
-    
-    # Filter transactions to get sum of monthly savings
-    monthly_savings = transactions_df[transactions_df["sub_category"] == "Monthly Savings"]
-    total_monthly_savings = monthly_savings["amount"].sum()
+    st.subheader("Monthly Savings Summary")
+    if not transactions_df.empty and "sub_category" in transactions_df.columns:
+        monthly_savings = transactions_df[transactions_df["sub_category"] == "Monthly Savings"]
+        total_monthly_savings = monthly_savings["amount"].sum()
+        st.metric(label="Total Monthly Savings", value=f"₹{total_monthly_savings}")
+    else:
+        st.write("No savings data available.")
 
-    # Display sum of Monthly Savings
-    st.metric("Total Monthly Savings", f"₹{total_monthly_savings}")
+# Transactions Over Time
+if not transactions_df.empty:
+    st.header("Transactions Over Time")
+    transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
+    transactions_over_time = transactions_df.groupby('date_time')['amount'].sum().reset_index()
 
+    # Plotting
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(transactions_over_time['date_time'], transactions_over_time['amount'], marker='o', color='tab:blue')
+    ax.set_title("Transactions Over Time", fontsize=14)
+    ax.set_xlabel("Date", fontsize=12)
+    ax.set_ylabel("Amount", fontsize=12)
+    ax.grid(True)
+    st.pyplot(fig)
+
+# Summary Statistics
+if not transactions_df.empty:
+    st.header("Summary")
+    cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
+    cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+    online = transactions_df[transactions_df["payment_method"] == "Online"]["amount"].sum()
+    cash = transactions_df[transactions_df["payment_method"] == "Cash"]["amount"].sum()
+    remaining_balance = cash_in - cash_out
+
+    st.write(f"Total Cash In: ₹{cash_in}")
+    st.write(f"Total Cash Out: ₹{cash_out}")
+    st.write(f"Total Online Transactions: ₹{online}")
+    st.write(f"Total Cash Transactions: ₹{cash}")
+    st.write(f"Remaining Balance: ₹{remaining_balance}")
+
+    # Expenditure by category
+    st.header("Category-wise Expenditure and Savings")
+    category_summary = transactions_df.groupby(["category", "sub_category"])["amount"].sum().reset_index()
+    st.bar_chart(category_summary, x="category", y="amount", color="sub_category")
