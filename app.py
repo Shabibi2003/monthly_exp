@@ -74,7 +74,9 @@ st.title("Monthly Expenditure Tracker")
 st.sidebar.header("Add New Transaction")
 with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
-    time = st.time_input("Time", value=datetime.now().time())  # Time input field
+    # Default time set to current time, which can be modified by the user
+    current_time = datetime.now().time()  # Real-time current time
+    time = st.time_input("Time", value=current_time)  # Time input field
     category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
