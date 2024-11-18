@@ -51,10 +51,10 @@ if st.button("Insert"):
     else:
         st.warning("Please provide both name and age.")
 
-# Display data section
-st.subheader("Database Records")
-data = fetch_data()
-if data:
-    st.write(data)
-else:
-    st.warning("No data found.")
+# # Display data section
+# st.subheader("Database Records")
+# data = fetch_data()
+# if data:
+#     st.write(data)
+# else:
+#     st.warning("No data found.")
