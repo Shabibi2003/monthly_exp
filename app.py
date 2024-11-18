@@ -75,10 +75,11 @@ with st.sidebar.form("transaction_form"):
     transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
     
     # Subcategory selection based on transaction type
-    if transaction_type == "Cash Out":
-        sub_category = st.selectbox("Sub-Category", ["Monthly Expenses", "Other Expenses"])
-    else:
+    if transaction_type == "Cash In":
         sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
+    else:
+        sub_category = None
+        
     
     payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
     submit = st.form_submit_button("Add Transaction")
