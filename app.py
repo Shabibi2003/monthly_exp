@@ -1,22 +1,22 @@
-import streamlit as st
 import mysql.connector
 from mysql.connector import Error
 
 # Function to establish the MySQL connection
 def create_connection():
     try:
-        # Connect to MySQL server
+        # Connect to XAMPP's MySQL server (use your username and password)
         connection = mysql.connector.connect(
-            host="localhost",  # MySQL server address (localhost in this case)
-            user="project",        # Your MySQL username
-            password="Usman@9876",  # Your MySQL password
-            database="expenses"  # The database you want to connect to
+            host="127.0.0.1",      # MySQL server address (localhost)
+            user="project",           # MySQL username in XAMPP (usually 'root')
+            password="Usman@9876",           # Default password is empty in XAMPP
+            database="expenses" # Name of your database in phpMyAdmin
         )
         
         if connection.is_connected():
+            print("Connection successful")
             return connection
     except Error as err:
-        st.error(f"Error: {err}")
+        print(f"Error: {err}")
         return None
 
 # Create table if it doesn't exist
@@ -39,7 +39,7 @@ def insert_data(name, age):
     connection = create_connection()
     if connection:
         cursor = connection.cursor()
-        cursor.execute('''
+        cursor.execute(''' 
             INSERT INTO users (name, age)
             VALUES (%s, %s)
         ''', (name, age))
@@ -59,29 +59,9 @@ def fetch_data():
         connection.close()
     return data
 
-# Streamlit UI
-st.title("MySQL Data Insertion and Display")
-
-# Create table if it doesn't exist
-create_table()
-
-# User input for name and age
-st.subheader("Insert Data")
-name = st.text_input("Name")
-age = st.number_input("Age", min_value=1, max_value=120)
-
-if st.button("Insert Data"):
-    if name and age:
-        insert_data(name, age)
-        st.success(f"Data inserted: {name}, {age}")
-    else:
-        st.warning("Please fill in both fields.")
-
-# Display the data from the database
-st.subheader("Database Records")
-data = fetch_data()
-
-if data:
-    st.write(data)
-else:
-    st.warning("No data available.")
+# Example usage
+if __name__ == "__main__":
+    create_table()
+    insert_data("John Doe", 30)
+    records = fetch_data()
+    print(records)
