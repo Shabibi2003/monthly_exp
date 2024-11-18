@@ -3,26 +3,18 @@ import mysql.connector
 from mysql.connector import Error
 
 # Using the website URL of your MySQL server
-db_url = "https://monthlyexp-o67nvcwqw6u3sfazx88fsc.streamlit.app"  # Make sure the URL is within quotes
 
-# Function to establish the MySQL connection
-def create_connection():
-    try:
-        # Connect to the remote MySQL server (use your username and password)
-        connection = mysql.connector.connect(
-            host=db_url,         # MySQL server address (Website URL or domain)
-            user="project",        # Your MySQL username
-            password="Usman@9876",    # Your MySQL password
-            database="expenses"     # The database you want to use
-        )
-        
-        if connection.is_connected():
-            return connection
-    except Error as err:
-        st.error(f"Error: {err}")
-        return None
+# Reading data
+toml_data = toml.load("secrets.toml")
+# saving each credential into a variable
+HOST_NAME = toml_data['mysql']['host']
+DATABASE = toml_data['mysql']['database']
+PASSWORD = toml_data['mysql']['password']
+USER = toml_data['mysql']['user']
+PORT = toml_data['mysql']['port']
 
-# Create table if it doesn't exist
+mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
+
 def create_table():
     connection = create_connection()
     if connection:
