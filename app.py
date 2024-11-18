@@ -69,7 +69,7 @@ create_table()
 # Streamlit app title
 st.title("Monthly Expenditure Tracker")
 
-# Sidebar form for new transaction (Cash In / Cash Out)
+# Sidebar form for new transaction
 st.sidebar.header("Add New Transaction")
 with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
@@ -83,11 +83,22 @@ with st.sidebar.form("transaction_form"):
     category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
-    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out", "Online", "Cash"])  # Added "Online" and "Cash"
+    
+    # Transaction type buttons
+    transaction_type = None
+    if st.button("Add Cash In"):
+        transaction_type = "Cash In"
+    if st.button("Add Cash Out"):
+        transaction_type = "Cash Out"
+    if st.button("Add Online"):
+        transaction_type = "Online"
+    if st.button("Add Cash"):
+        transaction_type = "Cash"
+    
     submit = st.form_submit_button("Add Transaction")
 
     # Add data to the database
-    if submit:
+    if submit and transaction_type:
         # Combine date and time into a single datetime string
         date_time = f"{date} {time}"
         add_transaction(date_time, category, description, amount, transaction_type)
