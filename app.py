@@ -7,10 +7,10 @@ def create_connection():
     try:
         # Connect to MySQL server
         connection = mysql.connector.connect(
-            host="127.0.0.1",  # MySQL server address (localhost in this case)
-            user="root",        # Your MySQL username
+            host="localhost",  # MySQL server address (localhost in this case)
+            user="project",        # Your MySQL username
             password="Usman@9876",  # Your MySQL password
-            database="expenses_db"  # The database you want to connect to
+            database="expenses"  # The database you want to connect to
         )
         
         if connection.is_connected():
