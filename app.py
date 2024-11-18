@@ -1,26 +1,25 @@
 import streamlit as st
 import mysql.connector
-import toml
 from mysql.connector import Error
+import os
 
-# Reading MySQL credentials from secrets.toml
-toml_data = toml.load("secrets.toml")
-HOST_NAME = toml_data['mysql']['host']
-DATABASE = toml_data['mysql']['database']
-PASSWORD = toml_data['mysql']['password']
-USER = toml_data['mysql']['user']
-PORT = toml_data['mysql']['port']
+# Access MySQL credentials from Streamlit Secrets Manager
+HOST_NAME = st.secrets["mysql"]["host"]
+DATABASE = st.secrets["mysql"]["database"]
+PASSWORD = st.secrets["mysql"]["password"]
+USER = st.secrets["mysql"]["user"]
+PORT = st.secrets["mysql"]["port"]
 
 # Function to establish the MySQL connection
 def create_connection():
     try:
         # Use mysql.connector to connect to MySQL server
         connection = mysql.connector.connect(
-            host=HOST_NAME,  # Use host from secrets.toml
-            database=DATABASE,  # Use database from secrets.toml
-            user=USER,  # Use user from secrets.toml
-            password=PASSWORD,  # Use password from secrets.toml
-            port=PORT,  # Use port from secrets.toml (optional)
+            host=HOST_NAME,  # Use host from secrets
+            database=DATABASE,  # Use database from secrets
+            user=USER,  # Use user from secrets
+            password=PASSWORD,  # Use password from secrets
+            port=PORT,  # Use port from secrets
             use_pure=True
         )
         
