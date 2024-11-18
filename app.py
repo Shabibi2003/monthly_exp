@@ -7,7 +7,7 @@ def create_connection():
     try:
         # Connect to XAMPP's MySQL server (use your username and password)
         connection = mysql.connector.connect(
-            host="127.0.0.1",      # MySQL server address (localhost)
+            host="localhost",      # MySQL server address (localhost)
             user="project",        # MySQL username in XAMPP (usually 'root')
             password="Usman@9876", # Your password
             database="expenses"   # The database in phpMyAdmin
