@@ -98,7 +98,7 @@ col1, col2 = st.columns(2)
 
 # Column 1: Overall data
 with col1:
-    st.subheader("Overall Data")
+    st.subheader("Monthly Expendeture")
     if not transactions_df.empty:
         st.dataframe(transactions_df)
     else:
