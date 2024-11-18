@@ -84,25 +84,28 @@ with st.sidebar.form("transaction_form"):
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
     
-    # Transaction type buttons
-    transaction_type = None
-    if st.button("Add Cash In"):
-        transaction_type = "Cash In"
-    if st.button("Add Cash Out"):
-        transaction_type = "Cash Out"
-    if st.button("Add Online"):
-        transaction_type = "Online"
-    if st.button("Add Cash"):
-        transaction_type = "Cash"
-    
     submit = st.form_submit_button("Add Transaction")
 
-    # Add data to the database
-    if submit and transaction_type:
-        # Combine date and time into a single datetime string
-        date_time = f"{date} {time}"
-        add_transaction(date_time, category, description, amount, transaction_type)
-        st.sidebar.success(f"{transaction_type} added successfully at {date_time}!")
+# Set default transaction type as None initially
+transaction_type = None
+
+# Buttons for selecting the transaction type
+st.sidebar.header("Select Transaction Type")
+if st.sidebar.button("Add Cash In"):
+    transaction_type = "Cash In"
+elif st.sidebar.button("Add Cash Out"):
+    transaction_type = "Cash Out"
+elif st.sidebar.button("Add Online"):
+    transaction_type = "Online"
+elif st.sidebar.button("Add Cash"):
+    transaction_type = "Cash"
+
+# Add data to the database when the form is submitted and transaction type is set
+if submit and transaction_type:
+    # Combine date and time into a single datetime string
+    date_time = f"{date} {time}"
+    add_transaction(date_time, category, description, amount, transaction_type)
+    st.sidebar.success(f"{transaction_type} added successfully at {date_time}!")
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
