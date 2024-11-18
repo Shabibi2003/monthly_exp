@@ -16,13 +16,13 @@ def init_connection():
         ssl_ca="ca-cert.pem"  # Path to the SSL certificate
     )
 
-def add_transaction(date, time, category, description, amount, transaction_type):
+def add_transaction(date_time, category, description, amount, transaction_type):
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        INSERT INTO transactions (date, time, category, description, amount, transaction_type)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (date, time, category, description, amount, transaction_type))
+        INSERT INTO transactions (date_time, category, description, amount, transaction_type)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (date_time, category, description, amount, transaction_type))
     conn.commit()
     conn.close()
 
@@ -46,15 +46,14 @@ def fetch_transactions():
     conn.close()
     return transactions_df
 
-# Ensure table exists with a separate time column
+# Ensure table exists with a combined date_time column
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
         CREATE TABLE IF NOT EXISTS transactions (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            date DATE,
-            time TIME,
+            date_time DATETIME,
             category VARCHAR(100),
             description VARCHAR(255),
             amount DECIMAL(10, 2),
@@ -89,10 +88,10 @@ with st.sidebar.form("transaction_form"):
 
     # Add data to the database
     if submit:
-        # Ensure the time is in the correct format (HH:MM:SS)
-        current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Ensure time is in local timezone and formatted correctly
-        add_transaction(date, current_time, category, description, amount, transaction_type)
-        st.sidebar.success(f"{transaction_type} added successfully at {current_time}!")
+        # Combine date and time into a single datetime string
+        date_time = f"{date} {time}"
+        add_transaction(date_time, category, description, amount, transaction_type)
+        st.sidebar.success(f"{transaction_type} added successfully at {date_time}!")
 
 # Button to delete all records in the database
 if st.sidebar.button("Delete All Records"):
@@ -141,12 +140,12 @@ if not transactions_df.empty:
     
     # Transactions over time graph
     st.header("Transactions Over Time")
-    transactions_df['date'] = pd.to_datetime(transactions_df['date'])
-    transactions_over_time = transactions_df.groupby('date')['amount'].sum().reset_index()
+    transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
+    transactions_over_time = transactions_df.groupby('date_time')['amount'].sum().reset_index()
 
     # Plotting the transactions over time graph
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(transactions_over_time['date'], transactions_over_time['amount'], marker='o', color='tab:blue')
+    ax.plot(transactions_over_time['date_time'], transactions_over_time['amount'], marker='o', color='tab:blue')
     ax.set_title("Transactions Over Time", fontsize=14)
     ax.set_xlabel("Date", fontsize=12)
     ax.set_ylabel("Amount", fontsize=12)
