@@ -2,6 +2,7 @@ import streamlit as st
 import mysql.connector
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Function to establish the MySQL (TiDB) connection
 def init_connection():
@@ -14,13 +15,15 @@ def init_connection():
         ssl_ca="ca-cert.pem"  # Path to the SSL certificate
     )
 
-def add_transaction(date, category, description, amount, transaction_type):
+def add_transaction(date, time, category, description, amount, transaction_type):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("""
+    # Combine date and time into a datetime format
+    transaction_datetime = f"{date} {time}"
+    cursor.execute(""" 
         INSERT INTO transactions (date, category, description, amount, transaction_type)
         VALUES (%s, %s, %s, %s, %s)
-    """, (date, category, description, amount, transaction_type))
+    """, (transaction_datetime, category, description, amount, transaction_type))
     conn.commit()
     conn.close()
 
@@ -48,10 +51,10 @@ def fetch_transactions():
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("""
+    cursor.execute(""" 
         CREATE TABLE IF NOT EXISTS transactions (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            date DATE,
+            date DATETIME,
             category VARCHAR(100),
             description VARCHAR(255),
             amount DECIMAL(10, 2),
@@ -71,15 +74,16 @@ st.title("Monthly Expenditure Tracker")
 st.sidebar.header("Add New Transaction")
 with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
+    time = st.time_input("Time", value=datetime.now().time())  # Time input field
     category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
     amount = st.number_input("Amount", min_value=0.0, step=0.01)
-    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out", "Online", "Cash"])  # Added "Online" and "Cash"
     submit = st.form_submit_button("Add Transaction")
 
     # Add data to the database
     if submit:
-        add_transaction(date, category, description, amount, transaction_type)
+        add_transaction(date, time, category, description, amount, transaction_type)
         st.sidebar.success(f"{transaction_type} added successfully!")
 
 # Button to delete all records in the database
@@ -110,13 +114,17 @@ if not transactions_df.empty:
     # Display summary statistics
     st.header("Summary")
     
-    # Cash In and Cash Out calculation
+    # Cash In, Cash Out, Online, and Cash calculation
     cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
     cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-    remaining_balance = cash_in - cash_out
+    online = transactions_df[transactions_df["transaction_type"] == "Online"]["amount"].sum()
+    cash = transactions_df[transactions_df["transaction_type"] == "Cash"]["amount"].sum()
+    remaining_balance = cash_in - cash_out + online - cash
 
     st.write(f"Total Cash In: ₹{cash_in}")
     st.write(f"Total Cash Out: ₹{cash_out}")
+    st.write(f"Total Online Transactions: ₹{online}")
+    st.write(f"Total Cash Transactions: ₹{cash}")
     st.write(f"Remaining Balance: ₹{remaining_balance}")
 
     # Display expenditure by category
