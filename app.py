@@ -3,6 +3,7 @@ import mysql.connector
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import pytz
 
 # Function to establish the MySQL (TiDB) connection
 def init_connection():
@@ -73,8 +74,12 @@ st.title("Monthly Expenditure Tracker")
 st.sidebar.header("Add New Transaction")
 with st.sidebar.form("transaction_form"):
     date = st.date_input("Date")
-    # Real-time current time for the transaction
-    current_time = datetime.now().strftime('%H:%M:%S')  # Current time in HH:MM:SS format
+    
+    # Get the current time in the local timezone (India Standard Time)
+    local_timezone = pytz.timezone("Asia/Kolkata")  # Adjust the timezone as needed
+    current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Current time in HH:MM:SS format
+    
+    # Time input field with default as current time
     time = st.text_input("Time", current_time)  # Display the current time in the input box
     category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
     description = st.text_input("Description")
@@ -85,7 +90,7 @@ with st.sidebar.form("transaction_form"):
     # Add data to the database
     if submit:
         # Get the current time when the form is submitted
-        current_time = datetime.now().strftime('%H:%M:%S')  # Update the time at submission
+        current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Ensure time is in local timezone
         add_transaction(date, current_time, category, description, amount, transaction_type)
         st.sidebar.success(f"{transaction_type} added successfully at {current_time}!")
 
