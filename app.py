@@ -3,7 +3,6 @@ import mysql.connector
 from mysql.connector import Error
 import os
 
-# Access MySQL credentials from Streamlit Secrets Manager
 HOST_NAME = st.secrets["mysql"]["host"]
 DATABASE = st.secrets["mysql"]["database"]
 PASSWORD = st.secrets["mysql"]["password"]
