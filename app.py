@@ -3,7 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 
 # Using the website URL of your MySQL server
-db_url = https://monthlyexp-o67nvcwqw6u3sfazx88fsc.streamlit.app"  # Replace this with your actual MySQL server URL
+db_url = "https://monthlyexp-o67nvcwqw6u3sfazx88fsc.streamlit.app"  # Make sure the URL is within quotes
 
 # Function to establish the MySQL connection
 def create_connection():
