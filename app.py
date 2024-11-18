@@ -2,15 +2,18 @@ import streamlit as st
 import mysql.connector
 from mysql.connector import Error
 
+# Using the website URL of your MySQL server
+db_url = https://monthlyexp-o67nvcwqw6u3sfazx88fsc.streamlit.app/"  # Replace this with your actual MySQL server URL
+
 # Function to establish the MySQL connection
 def create_connection():
     try:
-        # Connect to XAMPP's MySQL server (use your username and password)
+        # Connect to the remote MySQL server (use your username and password)
         connection = mysql.connector.connect(
-            host="localhost",      # MySQL server address (localhost)
-            user="project",        # MySQL username in XAMPP (usually 'root')
-            password="Usman@9876", # Your password
-            database="expenses"   # The database in phpMyAdmin
+            host=db_url,         # MySQL server address (Website URL or domain)
+            user="project",        # Your MySQL username
+            password="Usman@9876",    # Your MySQL password
+            database="expenses"     # The database you want to use
         )
         
         if connection.is_connected():
