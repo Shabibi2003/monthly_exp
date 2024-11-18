@@ -33,12 +33,12 @@ def delete_expense(transaction_id):
     conn.commit()
     conn.close()
 
-def delete_all_expenses():
-    conn = init_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions")  # Delete all rows in the transactions table
-    conn.commit()
-    conn.close()
+# def delete_all_expenses():
+#     conn = init_connection()
+#     cursor = conn.cursor()
+#     cursor.execute("DELETE FROM transactions")  # Delete all rows in the transactions table
+#     conn.commit()
+#     conn.close()
 
 def fetch_transactions():
     conn = init_connection()
@@ -101,9 +101,9 @@ if submit:
     st.sidebar.success(f"{transaction_type} ({payment_method}) added successfully at {date_time}!")
 
 # Button to delete all records in the database
-if st.sidebar.button("Delete All Records"):
-    delete_all_expenses()
-    st.sidebar.success("All records have been deleted!")
+# if st.sidebar.button("Delete All Records"):
+#     delete_all_expenses()
+#     st.sidebar.success("All records have been deleted!")
 
 # Display transactions
 st.header("Transactions Overview")
