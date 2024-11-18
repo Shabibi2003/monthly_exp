@@ -89,8 +89,8 @@ with st.sidebar.form("transaction_form"):
 
     # Add data to the database
     if submit:
-        # Get the current time when the form is submitted
-        current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Ensure time is in local timezone
+        # Ensure the time is in the correct format (HH:MM:SS)
+        current_time = datetime.now(local_timezone).strftime('%H:%M:%S')  # Ensure time is in local timezone and formatted correctly
         add_transaction(date, current_time, category, description, amount, transaction_type)
         st.sidebar.success(f"{transaction_type} added successfully at {current_time}!")
 
