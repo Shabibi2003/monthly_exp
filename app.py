@@ -133,7 +133,7 @@ if not transactions_df.empty:
     cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
     online = transactions_df[transactions_df["payment_method"] == "Online"]["amount"].sum()
     cash = transactions_df[transactions_df["payment_method"] == "Cash"]["amount"].sum()
-    remaining_balance = cash_in - cash_out + online - cash
+    remaining_balance = cash_in - cash_out 
 
     st.write(f"Total Cash In: ₹{cash_in}")
     st.write(f"Total Cash Out: ₹{cash_out}")
