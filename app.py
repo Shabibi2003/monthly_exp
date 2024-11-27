@@ -93,15 +93,18 @@ if submit:
 # Fetch transactions
 transactions_df = fetch_transactions()
 
+# Filter out "Monthly Savings" transactions for expenditure calculations
+transactions_excluding_savings = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+
 # UI Layout with two columns
 st.header("Overview")
 col1, col2 = st.columns(2)
 
 # Column 1: Overall data
 with col1:
-    st.subheader("Monthly Expendeture")
-    if not transactions_df.empty:
-        st.dataframe(transactions_df)
+    st.subheader("Monthly Expenditure")
+    if not transactions_excluding_savings.empty:
+        st.dataframe(transactions_excluding_savings)
     else:
         st.write("No transactions recorded yet.")
 
@@ -116,10 +119,10 @@ with col2:
         st.write("No savings data available.")
 
 # Transactions Over Time
-if not transactions_df.empty:
+if not transactions_excluding_savings.empty:
     st.header("Transactions Over Time")
-    transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
-    transactions_over_time = transactions_df.groupby('date_time')['amount'].sum().reset_index()
+    transactions_excluding_savings['date_time'] = pd.to_datetime(transactions_excluding_savings['date_time'])
+    transactions_over_time = transactions_excluding_savings.groupby('date_time')['amount'].sum().reset_index()
 
     # Plotting
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -131,12 +134,12 @@ if not transactions_df.empty:
     st.pyplot(fig)
 
 # Summary Statistics
-if not transactions_df.empty:
+if not transactions_excluding_savings.empty:
     st.header("Summary")
-    cash_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
-    cash_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-    online = transactions_df[transactions_df["payment_method"] == "Online"]["amount"].sum()
-    cash = transactions_df[transactions_df["payment_method"] == "Cash"]["amount"].sum()
+    cash_in = transactions_excluding_savings[transactions_excluding_savings["transaction_type"] == "Cash In"]["amount"].sum()
+    cash_out = transactions_excluding_savings[transactions_excluding_savings["transaction_type"] == "Cash Out"]["amount"].sum()
+    online = transactions_excluding_savings[transactions_excluding_savings["payment_method"] == "Online"]["amount"].sum()
+    cash = transactions_excluding_savings[transactions_excluding_savings["payment_method"] == "Cash"]["amount"].sum()
     remaining_balance = cash_in - cash_out
 
     st.write(f"Total Cash In: ₹{cash_in}")
@@ -145,7 +148,7 @@ if not transactions_df.empty:
     st.write(f"Total Cash Transactions: ₹{cash}")
     st.write(f"Remaining Balance: ₹{remaining_balance}")
 
-    # Expenditure by category
+    # Expenditure by category (excluding savings)
     st.header("Category-wise Expenditure and Savings")
-    category_summary = transactions_df.groupby(["category", "sub_category"])["amount"].sum().reset_index()
+    category_summary = transactions_excluding_savings.groupby(["category", "sub_category"])["amount"].sum().reset_index()
     st.bar_chart(category_summary, x="category", y="amount", color="sub_category")
