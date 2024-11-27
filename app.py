@@ -27,6 +27,14 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn.commit()
     conn.close()
 
+# Function to remove a transaction by ID
+def remove_transaction(transaction_id):
+    conn = init_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
+    conn.commit()
+    conn.close()
+
 # Function to fetch all transactions
 def fetch_transactions():
     conn = init_connection()
@@ -80,7 +88,6 @@ with st.sidebar.form("transaction_form"):
     else:
         sub_category = None
         
-    
     payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
     submit = st.form_submit_button("Add Transaction")
 
@@ -89,6 +96,20 @@ if submit:
     date_time = f"{date} {time}"
     add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
     st.sidebar.success(f"Transaction added successfully: {transaction_type} ({sub_category}) at {date_time}!")
+
+# Sidebar for deleting a transaction by ID
+st.sidebar.header("Remove Transaction by ID")
+with st.sidebar.form("remove_form"):
+    transaction_id = st.number_input("Transaction ID", min_value=1, step=1)
+    remove_submit = st.form_submit_button("Remove Transaction")
+
+# Remove transaction when form is submitted
+if remove_submit:
+    try:
+        remove_transaction(transaction_id)
+        st.sidebar.success(f"Transaction with ID {transaction_id} removed successfully!")
+    except Exception as e:
+        st.sidebar.error(f"Error removing transaction: {str(e)}")
 
 # Fetch transactions
 transactions_df = fetch_transactions()
