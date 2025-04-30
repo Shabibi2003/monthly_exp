@@ -111,9 +111,14 @@ create_table()
 
 # Main UI
 st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Tabs for different sections
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 with tab1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -140,6 +145,8 @@ with tab1:
     else:
         st.info("No transactions recorded yet.")
     st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 with tab2:
     if not transactions_df.empty:
@@ -185,6 +192,8 @@ with tab2:
         
         st.markdown('</div>', unsafe_allow_html=True)
 
+st.markdown("<br>", unsafe_allow_html=True)
+
 with tab3:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
@@ -214,6 +223,8 @@ with tab3:
             add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
             st.success("Transaction added successfully!")
     st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Delete transaction functionality
 with st.expander("🗑️ Delete Transaction"):
