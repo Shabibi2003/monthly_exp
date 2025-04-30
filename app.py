@@ -210,7 +210,7 @@ with tab3:
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
             transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
 
-        if transaction_type == "Cash In":
+        if transaction_type == "Cash Out":
             sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
         else:
             sub_category = None
