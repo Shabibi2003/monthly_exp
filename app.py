@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 
+st.set_page_config(
+    page_title="Monthly Expenditure",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 # Custom CSS styling
 st.markdown("""
     <style>
