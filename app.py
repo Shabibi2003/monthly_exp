@@ -339,13 +339,13 @@ with tab3:
             st.balloons()  # Add confetti effect
             st.session_state['rerun'] = True
 
-        # Modify the monthly savings submission success part
-        if savings_submit:
-            savings_date_time = f"{savings_date} {current_time}"
-            add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
-            st.success("Monthly savings added successfully!")
-            st.balloons()  # Add confetti effect
-            st.session_state['rerun'] = True  # Set rerun flag
+        # Remove this block as it's causing the error
+        # if savings_submit:
+        #     savings_date_time = f"{savings_date} {current_time}"
+        #     add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
+        #     st.success("Monthly savings added successfully!")
+        #     st.balloons()
+        #     st.session_state['rerun'] = True
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
