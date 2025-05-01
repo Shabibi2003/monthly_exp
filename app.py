@@ -353,7 +353,8 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
-    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after filter section
+    # st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after filter section
+
 
 st.markdown("<br>", unsafe_allow_html=True)
 
