@@ -334,20 +334,17 @@ st.markdown("""
 with tab1:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
-        # Add search and filter functionality
-        search_term = st.text_input("🔍 Search transactions", "")
+        # Remove search functionality
         col1, col2 = st.columns(2)
         with col1:
             category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
 
-        # Add red line below search section
+        # Add red line below filter section
         st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
         # Apply filters
         filtered_df = transactions_df
-        if search_term:
-            filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
         if category_filter:
             filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
         if type_filter:
@@ -356,7 +353,7 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
-    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
+    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after filter section
 
 st.markdown("<br>", unsafe_allow_html=True)
 
