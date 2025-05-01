@@ -25,48 +25,49 @@ st.markdown("""
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card {
-            padding: 50px;
-            border-radius: 15px;
-            background-color: #1e1e1e;  /* Dark background to match the app */
-            box-shadow: none;  /* Remove shadow */
-            margin: 0;  /* Remove all margins */
-            transition: transform 0.3s ease;
+            padding: 30px 0;  /* Only vertical padding */
+            background: none;  /* Remove background */
+            box-shadow: none;
+            margin: 0;
+            border: none;
         }
         .metric-card {
             text-align: center;
             padding: 25px;
-            background: #2d2d2d;  /* Darker background */
+            background: #2d2d2d;
             border-radius: 12px;
             border-left: 6px solid #007bff;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             margin: 10px 0;
-            color: white;  /* Light text */
+            color: white;
         }
         .chart-container {
-            background: #1e1e1e;  /* Dark background */
-            padding: 30px;
-            border-radius: 15px;
+            padding: 20px 0;  /* Only vertical padding */
+            background: none;  /* Remove background */
+            border: none;
             margin: 20px 0;
             color: white;
         }
-        /* Add red line style */
         .red-line {
             height: 2px;
             background: linear-gradient(to right, #ff4d4d, #ff9999);
             margin: 20px 0;
             border-radius: 1px;
+            width: 100%;
         }
-        /* Style for input fields and text */
-        .stTextInput>div>div>input {
-            background-color: #2d2d2d;
-            color: white;
-        }
-        .stSelectbox>div>div {
-            background-color: #2d2d2d;
-            color: white;
+        /* Remove backgrounds from Streamlit elements */
+        .stTextInput>div>div>input,
+        .stSelectbox>div>div,
+        .stMultiSelect>div>div {
+            background-color: transparent !important;
+            border-color: #4a4a4a !important;
         }
         .stDataFrame {
-            background-color: #2d2d2d;
+            background: none;
+        }
+        div[data-testid="stExpander"] {
+            background: none !important;
+            border: 1px solid #4a4a4a !important;
         }
     </style>
 """, unsafe_allow_html=True)
