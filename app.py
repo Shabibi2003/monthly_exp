@@ -326,26 +326,60 @@ st.markdown("<br>", unsafe_allow_html=True)
 with tab2:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
-        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
+        total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
+        total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+        balance = total_in - total_out
+        monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
 
-        with col1:
-            # Exclude monthly savings from total income
-            total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
-            st.metric("Total Income", f"₹{total_in:,.2f}")
-
-        with col2:
-            total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-            st.metric("Total Expenses", f"₹{total_out:,.2f}")
-
-        with col3:
-            # Calculate balance without monthly savings
-            balance = total_in - total_out
-            st.metric("Balance", f"₹{balance:,.2f}")
-
-        with col4:
-            # Display monthly savings separately
-            monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
-            st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
+        st.markdown("""
+        <style>
+        .custom-metric-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+        .custom-metric-box {
+            flex: 1;
+            background: #232323;
+            border-radius: 12px;
+            padding: 28px 10px 18px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            border: 2px solid #444;
+            color: white;
+            text-align: center;
+            min-width: 0;
+        }
+        .custom-metric-label {
+            color: #bbb;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .custom-metric-value {
+            color: #fff;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        </style>
+        <div class="custom-metric-row">
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Total Income</div>
+                <div class="custom-metric-value">₹{total_in:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Total Expenses</div>
+                <div class="custom-metric-value">₹{total_out:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Balance</div>
+                <div class="custom-metric-value">₹{balance:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Monthly Savings</div>
+                <div class="custom-metric-value">₹{monthly_savings:,.2f}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         # Interactive charts
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
