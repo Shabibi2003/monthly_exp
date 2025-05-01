@@ -241,7 +241,7 @@ with tab3:
 
     # Add a reload button
     if st.button("Reload"):
-        st.experimental_rerun()  # Rerun the script to refresh the data
+        st.rerun()  # Rerun the script to refresh the data
 
     st.markdown("<br>", unsafe_allow_html=True)
 
