@@ -5,6 +5,52 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 
+st.set_page_config(
+    page_title="Monthly Expenditure",
+    layout="wide",
+    page_icon = '📊',
+    initial_sidebar_state="expanded"
+)
+# Custom CSS styling
+st.markdown("""
+    <style>
+        .main-header {
+            text-align: center;
+            color: #2c3e50;
+            padding: 20px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .card {
+            padding: 40px;  /* Increased padding for larger size */
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+        .stButton>button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Function to establish the MySQL (TiDB) connection
 def init_connection():
     return mysql.connector.connect(
@@ -64,112 +110,167 @@ def create_table():
 # Create table if not exists
 create_table()
 
-# Streamlit app title
-st.title("Monthly Expenditure Tracker")
+# Main UI
+st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-# Sidebar form for new transaction
-st.sidebar.header("Add New Transaction")
-with st.sidebar.form("transaction_form"):
-    date = st.date_input("Date")
-    
-    # Get the current time in the local timezone
-    local_timezone = pytz.timezone("Asia/Kolkata")
-    current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
-    time = st.text_input("Time", current_time)
-    
-    category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
-    description = st.text_input("Description")
-    amount = st.number_input("Amount", min_value=0.0, step=0.01)
-    transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
-    
-    # Subcategory selection based on transaction type
-    if transaction_type == "Cash In":
-        sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
+# Tabs for different sections
+tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+with tab1:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    if not transactions_df.empty:
+        # Add search and filter functionality
+        search_term = st.text_input("🔍 Search transactions", "")
+        col1, col2 = st.columns(2)
+        with col1:
+            category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
+        with col2:
+            type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
+
+        # Apply filters
+        filtered_df = transactions_df
+        if search_term:
+            filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
+        if category_filter:
+            filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
+        if type_filter:
+            filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
+
+        st.dataframe(filtered_df, use_container_width=True)
     else:
-        sub_category = None
+        st.info("No transactions recorded yet.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+with tab2:
+    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    if not transactions_df.empty:
+        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
         
-    payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
-    submit = st.form_submit_button("Add Transaction")
+        with col1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Exclude monthly savings from total income
+            total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
+            st.metric("Total Income", f"₹{total_in:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with col2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+            st.metric("Total Expenses", f"₹{total_out:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with col3:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Calculate balance without monthly savings
+            balance = total_in - total_out
+            st.metric("Balance", f"₹{balance:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col4:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Display monthly savings separately
+            monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
+            st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
 
-# Add transaction to database when form is submitted
-if submit:
-    date_time = f"{date} {time}"
-    add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
-    st.sidebar.success(f"Transaction added successfully: {transaction_type} ({sub_category}) at {date_time}!")
+        # Interactive charts
+        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+        chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
+        
+        if chart_type == "Category Distribution":
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            category_data = transactions_df.groupby('category')['amount'].sum()
+            plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
+            plt.title("Expenses by Category")
+            plt.savefig("category_distribution.png")  # Save as image
+            st.image("category_distribution.png")  # Display image
+            
+        elif chart_type == "Time Series":
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
+            time_data = transactions_df.groupby('date_time')['amount'].sum()
+            plt.plot(time_data.index, time_data.values)
+            plt.title("Time Series of Transactions")
+            plt.savefig("time_series.png")  # Save as image
+            st.image("time_series.png")  # Display image
+            
+        elif chart_type == "Payment Methods":
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            payment_data = transactions_df.groupby('payment_method')['amount'].sum()
+            plt.bar(payment_data.index, payment_data.values)
+            plt.title("Expenses by Payment Method")
+            plt.savefig("payment_methods.png")  # Save as image
+            st.image("payment_methods.png")  # Display image
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Sidebar for deleting a transaction by ID
-st.sidebar.header("Remove Transaction by ID")
-with st.sidebar.form("remove_form"):
-    transaction_id = st.number_input("Transaction ID", min_value=1, step=1)
-    remove_submit = st.form_submit_button("Remove Transaction")
+st.markdown("<br>", unsafe_allow_html=True)
 
-# Remove transaction when form is submitted
-if remove_submit:
-    try:
-        remove_transaction(transaction_id)
-        st.sidebar.success(f"Transaction with ID {transaction_id} removed successfully!")
-    except Exception as e:
-        st.sidebar.error(f"Error removing transaction: {str(e)}")
+with tab3:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    with st.form("transaction_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            date = st.date_input("Date")
+            local_timezone = pytz.timezone("Asia/Kolkata")
+            current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
+            time = st.text_input("Time", current_time)
+            transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
+        
+        with col2:
+            description = st.text_input("Description")
+            amount = st.number_input("Amount", min_value=0.0, step=0.01)
+            
+        payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+        submit = st.form_submit_button("Add Transaction")
 
-# Fetch transactions
-transactions_df = fetch_transactions()
+        if submit:
+            date_time = f"{date} {time}"
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
+            st.success("Transaction added successfully!")
+            st.session_state['rerun'] = True  # Set rerun flag
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# Filter out "Monthly Savings" transactions for expenditure calculations
-transactions_excluding_savings = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+    # Add a reload button
+    if st.button("Reload"):
+        st.rerun()  # Rerun the script to refresh the data
 
-# UI Layout with two columns
-st.header("Overview")
-col1, col2 = st.columns(2)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-# Column 1: Overall data
-with col1:
-    st.subheader("Monthly Expenditure")
-    if not transactions_excluding_savings.empty:
-        st.dataframe(transactions_excluding_savings)
-    else:
-        st.write("No transactions recorded yet.")
+    # New section for adding monthly savings
+    with st.expander("➕ Add Monthly Savings"):
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        with st.form("monthly_savings_form"):
+            savings_date = st.date_input("Savings Date")
+            savings_amount = st.number_input("Savings Amount", min_value=0.0, step=0.01)
+            savings_submit = st.form_submit_button("Add Monthly Savings")
 
-# Column 2: Monthly Savings
-with col2:
-    st.subheader("Monthly Savings Summary")
-    if not transactions_df.empty and "sub_category" in transactions_df.columns:
-        monthly_savings = transactions_df[transactions_df["sub_category"] == "Monthly Savings"]
-        total_monthly_savings = monthly_savings["amount"].sum()
-        st.metric(label="Total Monthly Savings", value=f"₹{total_monthly_savings}")
-    else:
-        st.write("No savings data available.")
+            if savings_submit:
+                savings_date_time = f"{savings_date} {current_time}"
+                add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
+                st.success("Monthly savings added successfully!")
+                st.session_state['rerun'] = True  # Set rerun flag
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Transactions Over Time
-if not transactions_excluding_savings.empty:
-    st.header("Transactions Over Time")
-    transactions_excluding_savings['date_time'] = pd.to_datetime(transactions_excluding_savings['date_time'])
-    transactions_over_time = transactions_excluding_savings.groupby('date_time')['amount'].sum().reset_index()
+st.markdown("<br>", unsafe_allow_html=True)
 
-    # Plotting
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(transactions_over_time['date_time'], transactions_over_time['amount'], marker='o', color='tab:blue')
-    ax.set_title("Transactions Over Time", fontsize=14)
-    ax.set_xlabel("Date", fontsize=12)
-    ax.set_ylabel("Amount", fontsize=12)
-    ax.grid(True)
-    st.pyplot(fig)
-
-# Summary Statistics
-if not transactions_excluding_savings.empty:
-    st.header("Summary")
-    cash_in = transactions_excluding_savings[transactions_excluding_savings["transaction_type"] == "Cash In"]["amount"].sum()
-    cash_out = transactions_excluding_savings[transactions_excluding_savings["transaction_type"] == "Cash Out"]["amount"].sum()
-    online = transactions_excluding_savings[transactions_excluding_savings["payment_method"] == "Online"]["amount"].sum()
-    cash = transactions_excluding_savings[transactions_excluding_savings["payment_method"] == "Cash"]["amount"].sum()
-    remaining_balance = cash_in - cash_out
-
-    st.write(f"Total Cash In: ₹{cash_in}")
-    st.write(f"Total Cash Out: ₹{cash_out}")
-    st.write(f"Total Online Transactions: ₹{online}")
-    st.write(f"Total Cash Transactions: ₹{cash}")
-    st.write(f"Remaining Balance: ₹{remaining_balance}")
-
-    # Expenditure by category (excluding savings)
-    st.header("Category-wise Expenditure and Savings")
-    category_summary = transactions_excluding_savings.groupby(["category", "sub_category"])["amount"].sum().reset_index()
-    st.bar_chart(category_summary, x="category", y="amount", color="sub_category")
+# Delete transaction functionality
+with st.expander("🗑️ Delete Transaction"):
+    with st.form("delete_form"):
+        transaction_id = st.number_input("Transaction ID to Delete", min_value=1, step=1)
+        delete_submit = st.form_submit_button("Delete")
+        if delete_submit:
+            try:
+                remove_transaction(transaction_id)
+                st.success(f"Transaction {transaction_id} deleted successfully!")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
