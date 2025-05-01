@@ -427,12 +427,14 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        # st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+        # Filter out Monthly Savings for charts
+        chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
         if chart_type == "Category Distribution":
             fig = plt.figure(figsize=(6, 4))  # Reduced size
-            category_data = transactions_df.groupby('category')['amount'].sum()
+            category_data = chart_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
             plt.savefig("category_distribution.png")  # Save as image
@@ -440,8 +442,8 @@ with tab2:
             
         elif chart_type == "Time Series":
             fig = plt.figure(figsize=(6, 4))  # Reduced size
-            transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
-            time_data = transactions_df.groupby('date_time')['amount'].sum()
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Transactions")
             plt.savefig("time_series.png")  # Save as image
@@ -449,7 +451,7 @@ with tab2:
             
         elif chart_type == "Payment Methods":
             fig = plt.figure(figsize=(6, 4))  # Reduced size
-            payment_data = transactions_df.groupby('payment_method')['amount'].sum()
+            payment_data = chart_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
             plt.savefig("payment_methods.png")  # Save as image
