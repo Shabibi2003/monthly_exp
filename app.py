@@ -280,7 +280,7 @@ def load_lottie_url(url: str):
 # Main UI
 col1, col2 = st.columns([4, 1])
 with col1:
-    st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 with col2:
     st.markdown(
         """
@@ -290,18 +290,19 @@ with col2:
             align-items: center;
             justify-content: center;
             height: 100%;
-            padding-top: 5px;
+            /* Remove or reduce top padding for better vertical alignment */
+            padding-top: 0;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
-
     try:
         lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
+        # Use the container to ensure the animation stays in the column
         with st.container():
             st.markdown('<div class="lottie-align">', unsafe_allow_html=True)
-            st_lottie(lottie_money, height=90, key="header_money")
+            st_lottie(lottie_money, height=70, key="header_money")
             st.markdown('</div>', unsafe_allow_html=True)
     except:
         st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
@@ -316,7 +317,7 @@ tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Tran
 st.markdown("""
     <style>
         .tab-gap {
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
     </style>
     <div class="tab-gap"></div>
