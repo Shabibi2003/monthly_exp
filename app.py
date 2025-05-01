@@ -291,7 +291,7 @@ with col2:
             justify-content: center;
             height: 100%;
             /* Remove or reduce top padding for better vertical alignment */
-            padding-top: 0;
+            padding-bottom: 20;
         }
         </style>
         """,
@@ -307,7 +307,6 @@ with col2:
     except:
         st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Define tabs first
