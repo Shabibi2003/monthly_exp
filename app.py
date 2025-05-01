@@ -296,11 +296,12 @@ with col2:
         """,
         unsafe_allow_html=True
     )
+    
     try:
         lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
         with st.container():
             st.markdown('<div class="lottie-align">', unsafe_allow_html=True)
-            st_lottie(lottie_money, height=60, key="header_money")
+            st_lottie(lottie_money, height=90, key="header_money")
             st.markdown('</div>', unsafe_allow_html=True)
     except:
         st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
