@@ -28,7 +28,7 @@ st.markdown("""
             padding: 30px 0;  /* Only vertical padding */
             background: none;  /* Remove background */
             box-shadow: none;
-            margin: 0;
+            margin: 2;
             border: none;
         }
         .metric-card {
