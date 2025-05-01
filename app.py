@@ -17,57 +17,61 @@ st.markdown("""
         .main-header {
             text-align: center;
             color: #2c3e50;
-            padding: 30px;
+            padding: 40px;
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
             border-radius: 15px;
-            margin-bottom: 40px;
-            font-size: 2.5em;
+            margin-bottom: 50px;
+            font-size: 2.8em;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card {
-            padding: 20px 0;  /* Only vertical padding */
-            background: none;  /* Remove background */
+            padding: 40px 20px;  /* Increased vertical padding */
+            background: none;
             box-shadow: none;
-            margin: 2;
+            margin: 0;
             border: none;
         }
         .metric-card {
             text-align: center;
-            padding: 25px;
+            padding: 35px;  /* Increased padding */
             background: #2d2d2d;
             border-radius: 12px;
             border-left: 6px solid #007bff;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin: 10px 0;
+            margin: 15px 0;
             color: white;
         }
         .chart-container {
-            padding: 20px 0;  /* Only vertical padding */
-            background: none;  /* Remove background */
+            padding: 40px 20px;  /* Increased padding */
+            background: none;
             border: none;
-            margin: 20px 0;
+            margin: 30px 0;
             color: white;
         }
-        .red-line {
-            height: 2px;
-            background: linear-gradient(to right, #ff4d4d, #ff9999);
-            margin: 20px 0;
-            border-radius: 1px;
-            width: 100%;
+        /* Increase size of form elements */
+        .stTextInput>div>div>input {
+            padding: 15px !important;
+            font-size: 16px !important;
         }
-        /* Remove backgrounds from Streamlit elements */
-        .stTextInput>div>div>input,
-        .stSelectbox>div>div,
-        .stMultiSelect>div>div {
-            background-color: transparent !important;
-            border-color: #4a4a4a !important;
+        .stSelectbox>div>div {
+            padding: 15px !important;
+            font-size: 16px !important;
         }
+        /* Increase size of dataframe */
         .stDataFrame {
-            background: none;
+            font-size: 16px !important;
+            padding: 20px 0 !important;
         }
+        /* Increase size of expander */
         div[data-testid="stExpander"] {
-            background: none !important;
-            border: 1px solid #4a4a4a !important;
+            padding: 30px !important;
+        }
+        /* Increase metrics text size */
+        div[data-testid="stMetricValue"] {
+            font-size: 28px !important;
+        }
+        div[data-testid="stMetricLabel"] {
+            font-size: 16px !important;
         }
     </style>
 """, unsafe_allow_html=True)
