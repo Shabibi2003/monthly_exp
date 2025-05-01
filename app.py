@@ -327,33 +327,25 @@ with tab2:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
         col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
-        
+
         with col1:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
             # Exclude monthly savings from total income
             total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
             st.metric("Total Income", f"₹{total_in:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
+
         with col2:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
             total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
             st.metric("Total Expenses", f"₹{total_out:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
+
         with col3:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
             # Calculate balance without monthly savings
             balance = total_in - total_out
             st.metric("Balance", f"₹{balance:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-        
+
         with col4:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
             # Display monthly savings separately
             monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
             st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
 
         # Interactive charts
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
