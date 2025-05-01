@@ -374,15 +374,17 @@ with st.expander("🗑️ Delete Transaction"):
                 st.error(f"Error: {str(e)}")
 
 # --- Simple Login Section ---
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # This must be called before os.getenv
+
+# --- Simple Login Section ---
 def check_login():
-    # Load credentials from .env file
-    load_dotenv()
     USERNAME = os.getenv("LOGIN_ID")
     PASSWORD = os.getenv("LOGIN_PASSWORD")
-
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
-
     if not st.session_state["logged_in"]:
         st.title("Login")
         username = st.text_input("Username")
