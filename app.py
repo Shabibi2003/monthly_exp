@@ -182,20 +182,29 @@ with tab2:
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(10, 6))
+            fig = plt.figure(figsize=(8, 4))  # Reduced size
             category_data = transactions_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
-            st.pyplot(fig)
+            plt.savefig("category_distribution.png")  # Save as image
+            st.image("category_distribution.png")  # Display image
             
         elif chart_type == "Time Series":
+            fig = plt.figure(figsize=(8, 4))  # Reduced size
             transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
             time_data = transactions_df.groupby('date_time')['amount'].sum()
-            st.line_chart(time_data)
+            plt.plot(time_data.index, time_data.values)
+            plt.title("Time Series of Transactions")
+            plt.savefig("time_series.png")  # Save as image
+            st.image("time_series.png")  # Display image
             
         elif chart_type == "Payment Methods":
+            fig = plt.figure(figsize=(8, 4))  # Reduced size
             payment_data = transactions_df.groupby('payment_method')['amount'].sum()
-            st.bar_chart(payment_data)
+            plt.bar(payment_data.index, payment_data.values)
+            plt.title("Expenses by Payment Method")
+            plt.savefig("payment_methods.png")  # Save as image
+            st.image("payment_methods.png")  # Display image
         
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -224,7 +233,7 @@ with tab3:
             date_time = f"{date} {time}"
             add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
             st.success("Transaction added successfully!")
-            st.experimental_rerun()  # Rerun the script to refresh the data
+            st.session_state['rerun'] = True  # Set rerun flag
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -241,7 +250,7 @@ with tab3:
                 savings_date_time = f"{savings_date} {current_time}"
                 add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
                 st.success("Monthly savings added successfully!")
-                st.experimental_rerun()  # Rerun the script to refresh the data
+                st.session_state['rerun'] = True  # Set rerun flag
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
