@@ -141,7 +141,7 @@ st.markdown("""
             border-radius: 8px;
         }
         .red-line {
-                border-top: 3px solid black;
+                border-top: 3px red;
                 margin-top: 30px;
                 margin-bottom: 30px;
             }
