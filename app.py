@@ -326,71 +326,68 @@ st.markdown("<br>", unsafe_allow_html=True)
 with tab2:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
-        col1, col2, col3, col4 = st.columns(4)
-
+        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
+        
         with col1:
-            with st.container():
-                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
-                st.metric("Total Income", f"₹{total_in:,.2f}")
-                st.markdown('</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Exclude monthly savings from total income
+            total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
+            st.metric("Total Income", f"₹{total_in:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
         with col2:
-            with st.container():
-                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-                st.metric("Total Expenses", f"₹{total_out:,.2f}")
-                st.markdown('</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+            st.metric("Total Expenses", f"₹{total_out:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
         with col3:
-            with st.container():
-                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                balance = total_in - total_out
-                st.metric("Balance", f"₹{balance:,.2f}")
-                st.markdown('</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Calculate balance without monthly savings
+            balance = total_in - total_out
+            st.metric("Balance", f"₹{balance:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
         with col4:
-            with st.container():
-                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
-                st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
-                st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Display monthly savings separately
+            monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
+            st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
 
         # Interactive charts
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
-
-        # Filter out monthly savings from charts
-        chart_df = transactions_df[transactions_df['sub_category'] != "Monthly Savings"]
-
+        
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(10, 6))
-            category_data = chart_df.groupby('category')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            category_data = transactions_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")
-            st.image("category_distribution.png")
-
+            plt.savefig("category_distribution.png")  # Save as image
+            st.image("category_distribution.png")  # Display image
+            
         elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(10, 6))
-            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
-            time_data = chart_df.groupby('date_time')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
+            time_data = transactions_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Transactions")
-            plt.savefig("time_series.png")
-            st.image("time_series.png")
-
+            plt.savefig("time_series.png")  # Save as image
+            st.image("time_series.png")  # Display image
+            
         elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(10, 6))
-            payment_data = chart_df.groupby('payment_method')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            payment_data = transactions_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")
-            st.image("payment_methods.png")
-
+            plt.savefig("payment_methods.png")  # Save as image
+            st.image("payment_methods.png")  # Display image
+        
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
+
 
 # Add Transaction Tab
 with tab3:
