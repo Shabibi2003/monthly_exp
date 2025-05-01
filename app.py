@@ -8,6 +8,7 @@ import pytz
 st.set_page_config(
     page_title="Monthly Expenditure",
     layout="wide",
+    page_icon = '📊',
     initial_sidebar_state="expanded"
 )
 # Custom CSS styling
