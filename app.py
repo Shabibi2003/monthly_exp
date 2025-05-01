@@ -260,175 +260,118 @@ st.markdown("""
     <div class="tab-gap"></div>
 """, unsafe_allow_html=True)
 
-# Add this line before using tab1, tab2, tab3
-tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+# Create two columns: left (for Transactions & Analytics), right (for Add Transaction)
+left_col, right_col = st.columns([2, 1])
 
-# Transactions Tab
-with tab1:
-    transactions_df = fetch_transactions()
-    if not transactions_df.empty:
-        col1, col2 = st.columns(2)
-        with col1:
-            category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
-        with col2:
-            type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
+with left_col:
+    tab1, tab2 = st.tabs(["💰 Transactions", "📊 Analytics"])
 
-        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
-        filtered_df = transactions_df
-        if category_filter:
-            filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
-        if type_filter:
-            filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
+    # Transactions Tab
+    with tab1:
+        transactions_df = fetch_transactions()
+        if not transactions_df.empty:
+            col1, col2 = st.columns(2)
+            with col1:
+                category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
+            with col2:
+                type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
 
-        st.dataframe(filtered_df, use_container_width=True)
-    else:
-        st.info("No transactions recorded yet.")
+            st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
+            filtered_df = transactions_df
+            if category_filter:
+                filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
+            if type_filter:
+                filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
 
-st.markdown("<br>", unsafe_allow_html=True)
+            st.dataframe(filtered_df, use_container_width=True)
+        else:
+            st.info("No transactions recorded yet.")
 
-# Analytics Tab
-with tab2:
-    transactions_df = fetch_transactions()
-    if not transactions_df.empty:
-        total_in = transactions_df[
-            (transactions_df["transaction_type"] == "Cash In") &
-            (transactions_df["sub_category"] != "Monthly Savings")
-        ]["amount"].sum()
-        total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-        balance = total_in - total_out
-        monthly_savings = transactions_df[
-            (transactions_df["transaction_type"] == "Cash In") &
-            (transactions_df["sub_category"] == "Monthly Savings")
-        ]["amount"].sum()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <style>
-        .custom-metric-row {{
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }}
-        .custom-metric-box {{
-            flex: 1;
-            background: #232323;
-            border-radius: 8px;
-            padding: 12px 5px 8px 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-            border: 1px solid #444;
-            color: white;
-            text-align: center;
-            min-width: 0;
-        }}
-        .custom-metric-label {{
-            color: #bbb;
-            font-size: 0.95em;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }}
-        .custom-metric-value {{
-            color: #fff;
-            font-size: 1.2em;
-            font-weight: bold;
-        }}
-        </style>
-        <div class="custom-metric-row">
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Total Income</div>
-                <div class="custom-metric-value">₹{total_in:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Total Expenses</div>
-                <div class="custom-metric-value">₹{total_out:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Balance</div>
-                <div class="custom-metric-value">₹{balance:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Monthly Savings</div>
-                <div class="custom-metric-value">₹{monthly_savings:,.2f}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+    # Analytics Tab
+    with tab2:
+        transactions_df = fetch_transactions()
+        if not transactions_df.empty:
+            chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
 
-        chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
-        
-        if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(6, 4))
-            category_data = chart_df.groupby('category')['amount'].sum()
-            plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
-            plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")
-            st.image("category_distribution.png")
+            chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
             
-        elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(6, 4))
-            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
-            time_data = chart_df.groupby('date_time')['amount'].sum()
-            plt.plot(time_data.index, time_data.values)
-            plt.title("Time Series of Transactions")
-            plt.savefig("time_series.png")
-            st.image("time_series.png")
+            if chart_type == "Category Distribution":
+                fig = plt.figure(figsize=(6, 4))
+                category_data = chart_df.groupby('category')['amount'].sum()
+                plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
+                plt.title("Expenses by Category")
+                plt.savefig("category_distribution.png")
+                st.image("category_distribution.png")
+                
+            elif chart_type == "Time Series":
+                fig = plt.figure(figsize=(6, 4))
+                chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+                time_data = chart_df.groupby('date_time')['amount'].sum()
+                plt.plot(time_data.index, time_data.values)
+                plt.title("Time Series of Transactions")
+                plt.savefig("time_series.png")
+                st.image("time_series.png")
+                
+            elif chart_type == "Payment Methods":
+                fig = plt.figure(figsize=(6, 4))
+                payment_data = chart_df.groupby('payment_method')['amount'].sum()
+                plt.bar(payment_data.index, payment_data.values)
+                plt.title("Expenses by Payment Method")
+                plt.savefig("payment_methods.png")
+                st.image("payment_methods.png")
             
-        elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(6, 4))
-            payment_data = chart_df.groupby('payment_method')['amount'].sum()
-            plt.bar(payment_data.index, payment_data.values)
-            plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")
-            st.image("payment_methods.png")
-        
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+with right_col:
+    tab3, = st.tabs(["➕ Add Transaction"])
+    with tab3:
+        with st.form("transaction_form"):
+            col1, col2 = st.columns(2)
+            with col1:
+                date = st.date_input("Date")
+                local_timezone = pytz.timezone("Asia/Kolkata")
+                current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
+                time = st.text_input("Time", current_time)
+                transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+                category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
+            
+            with col2:
+                description = st.text_input("Description")
+                amount = st.number_input("Amount", min_value=0.0, step=0.01)
+                
+            payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+            submit = st.form_submit_button("Add Transaction")
+
+            if submit:
+                date_time = f"{date} {time}"
+                add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
+                st.success("Transaction added successfully!")
+                st.session_state['rerun'] = True
         st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("Reload"):
+            st.rerun()
 
-# Add Transaction Tab
-with tab3:
-    with st.form("transaction_form"):
-        col1, col2 = st.columns(2)
-        with col1:
-            date = st.date_input("Date")
-            local_timezone = pytz.timezone("Asia/Kolkata")
-            current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
-            time = st.text_input("Time", current_time)
-            transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
-            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
-        
-        with col2:
-            description = st.text_input("Description")
-            amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            
-        payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
-        submit = st.form_submit_button("Add Transaction")
-
-        if submit:
-            date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
-            st.success("Transaction added successfully!")
-            st.session_state['rerun'] = True
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    if st.button("Reload"):
-        st.rerun()
-
-    # --- Monthly Saving Section ---
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
-    with st.form("monthly_saving_form"):
-        ms_date = st.date_input("Saving Date", key="ms_date")
-        ms_local_timezone = pytz.timezone("Asia/Kolkata")
-        ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
-        ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
-        ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
-        ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
-        ms_submit = st.form_submit_button("Add Monthly Saving")
-        if ms_submit:
-            ms_date_time = f"{ms_date} {ms_time}"
-            add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
-            st.success("Monthly saving added successfully!")
-            st.session_state['rerun'] = True
+        # --- Monthly Saving Section ---
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
+        with st.form("monthly_saving_form"):
+            ms_date = st.date_input("Saving Date", key="ms_date")
+            ms_local_timezone = pytz.timezone("Asia/Kolkata")
+            ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
+            ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
+            ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
+            ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
+            ms_submit = st.form_submit_button("Add Monthly Saving")
+            if ms_submit:
+                ms_date_time = f"{ms_date} {ms_time}"
+                add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
+                st.success("Monthly saving added successfully!")
+                st.session_state['rerun'] = True
 
 st.markdown("<br>", unsafe_allow_html=True)
 
