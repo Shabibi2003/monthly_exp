@@ -349,7 +349,7 @@ with tab2:
             st.markdown('</div>', unsafe_allow_html=True)
         
         with col4:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.markdown('<div class="card">', unsafe_allow_html=True)
             # Display monthly savings separately
             monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
             st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
