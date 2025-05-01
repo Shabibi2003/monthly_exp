@@ -370,3 +370,27 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
+
+# --- Simple Login Section ---
+def check_login():
+    # In production, use environment variables or a secure vault for credentials!
+    USERNAME = "admin"
+    PASSWORD = "password123"
+
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+
+    if not st.session_state["logged_in"]:
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username == USERNAME and password == PASSWORD:
+                st.session_state["logged_in"] = True
+                st.success("Login successful!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid username or password")
+        st.stop()  # Stop the app here if not logged in
+
+check_login()
