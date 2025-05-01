@@ -110,6 +110,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Tabs for different sections
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
+st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
