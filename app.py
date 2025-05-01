@@ -391,7 +391,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
 with tab3:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    # st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
