@@ -25,7 +25,7 @@ st.markdown("""
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card {
-            padding: 40px 20px;  /* Increased vertical padding */
+            padding: 40px 20px;
             background: none;
             box-shadow: none;
             margin: 0;
@@ -33,7 +33,7 @@ st.markdown("""
         }
         .metric-card {
             text-align: center;
-            padding: 35px;  /* Increased padding */
+            padding: 35px;
             background: #2d2d2d;
             border-radius: 12px;
             border-left: 6px solid #007bff;
@@ -42,36 +42,78 @@ st.markdown("""
             color: white;
         }
         .chart-container {
-            padding: 40px 20px;  /* Increased padding */
+            padding: 40px 20px;
             background: none;
             border: none;
             margin: 30px 0;
             color: white;
         }
-        /* Increase size of form elements */
-        .stTextInput>div>div>input {
+        .stTextInput>div>div>input,
+        .stSelectbox>div>div,
+        .stNumberInput>div>div>input {
             padding: 15px !important;
             font-size: 16px !important;
         }
-        .stSelectbox>div>div {
-            padding: 15px !important;
-            font-size: 16px !important;
-        }
-        /* Increase size of dataframe */
         .stDataFrame {
             font-size: 16px !important;
             padding: 20px 0 !important;
         }
-        /* Increase size of expander */
         div[data-testid="stExpander"] {
             padding: 30px !important;
         }
-        /* Increase metrics text size */
         div[data-testid="stMetricValue"] {
             font-size: 28px !important;
         }
         div[data-testid="stMetricLabel"] {
             font-size: 16px !important;
+        }
+
+        /* === NEW ADDITIONS BELOW === */
+
+        /* Larger, stylized tab buttons */
+        button[data-baseweb="tab"] {
+            font-size: 20px !important;
+            padding: 15px 30px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            background-color: #007bff !important;
+            margin-right: 10px !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            background-color: #0056b3 !important;
+            transition: background-color 0.3s ease;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #0056b3 !important;
+            border-bottom: 4px solid #ffcc00 !important;
+        }
+
+        /* Form Submit Button */
+        div.stButton>button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        div.stButton>button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Info/success message */
+        .element-container .stAlert-success {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        .element-container .stAlert-info,
+        .element-container .stAlert-error {
+            font-size: 16px;
+            border-radius: 8px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -147,32 +189,56 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
 
+# Add these imports at the top
+import streamlit as st
+import requests
+from streamlit_lottie import st_lottie
+import json
+
+# Add this function after the imports
+def load_lottie_url(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+# Add these Lottie animations after the page config
+# Loading Lottie Files
+lottie_money = load_lottie_url('https://assets4.lottiefiles.com/packages/lf20_3RKowV.json')
+lottie_analytics = load_lottie_url('https://assets7.lottiefiles.com/packages/lf20_qp1q7mct.json')
+lottie_add = load_lottie_url('https://assets9.lottiefiles.com/packages/lf20_5tl1xxnz.json')
+
+# Modify the tab sections to include animations
 with tab1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
-    if not transactions_df.empty:
-        # Add search and filter functionality
-        search_term = st.text_input("🔍 Search transactions", "")
-        col1, col2 = st.columns(2)
-        with col1:
-            category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
-        with col2:
-            type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
-
-        # Apply filters
-        filtered_df = transactions_df
-        if search_term:
-            filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
-        if category_filter:
-            filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
-        if type_filter:
-            filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
-
-        st.dataframe(filtered_df, use_container_width=True)
-    else:
-        st.info("No transactions recorded yet.")
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        st_lottie(lottie_money, height=150, key="money")
+    with col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+        if not transactions_df.empty:
+            # Add search and filter functionality
+            search_term = st.text_input("🔍 Search transactions", "")
+            col1, col2 = st.columns(2)
+            with col1:
+                category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
+            with col2:
+                type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
+    
+            # Apply filters
+            filtered_df = transactions_df
+            if search_term:
+                filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
+            if category_filter:
+                filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
+            if type_filter:
+                filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
+    
+            st.dataframe(filtered_df, use_container_width=True)
+        else:
+            st.info("No transactions recorded yet.")
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -267,28 +333,16 @@ with tab3:
             date_time = f"{date} {time}"
             add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
             st.success("Transaction added successfully!")
+            st.balloons()  # Add confetti effect
+            st.session_state['rerun'] = True
+
+        # Modify the monthly savings submission success part
+        if savings_submit:
+            savings_date_time = f"{savings_date} {current_time}"
+            add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
+            st.success("Monthly savings added successfully!")
+            st.balloons()  # Add confetti effect
             st.session_state['rerun'] = True  # Set rerun flag
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Add a reload button
-    if st.button("Reload"):
-        st.rerun()  # Rerun the script to refresh the data
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # New section for adding monthly savings
-    with st.expander("➕ Add Monthly Savings"):
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        with st.form("monthly_savings_form"):
-            savings_date = st.date_input("Savings Date")
-            savings_amount = st.number_input("Savings Amount", min_value=0.0, step=0.01)
-            savings_submit = st.form_submit_button("Add Monthly Savings")
-
-            if savings_submit:
-                savings_date_time = f"{savings_date} {current_time}"
-                add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
-                st.success("Monthly savings added successfully!")
-                st.session_state['rerun'] = True  # Set rerun flag
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
