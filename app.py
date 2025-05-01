@@ -282,11 +282,28 @@ col1, col2 = st.columns([4, 1])
 with col1:
     st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 with col2:
+    st.markdown(
+        """
+        <style>
+        .lottie-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-top: 18px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     try:
         lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
-        st_lottie(lottie_money, height=150, key="header_money")
+        with st.container():
+            st.markdown('<div class="lottie-align">', unsafe_allow_html=True)
+            st_lottie(lottie_money, height=70, key="header_money")
+            st.markdown('</div>', unsafe_allow_html=True)
     except:
-        st.markdown("📊", unsafe_allow_html=True)
+        st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
@@ -294,8 +311,16 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Define tabs first
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+# Add a gap below the tabs
+st.markdown("""
+    <style>
+        .tab-gap {
+            margin-bottom: 32px;
+        }
+    </style>
+    <div class="tab-gap"></div>
+""", unsafe_allow_html=True)
+
 # Transactions Tab
 with tab1:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
