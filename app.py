@@ -380,13 +380,12 @@ with tab2:
             </div>
         </div>
         """, unsafe_allow_html=True)
-
-        # Interactive charts
-        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+        
+        # st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))  # Reduced size
             category_data = transactions_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
@@ -394,7 +393,7 @@ with tab2:
             st.image("category_distribution.png")  # Display image
             
         elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))  # Reduced size
             transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
             time_data = transactions_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
@@ -403,7 +402,7 @@ with tab2:
             st.image("time_series.png")  # Display image
             
         elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))  # Reduced size
             payment_data = transactions_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
