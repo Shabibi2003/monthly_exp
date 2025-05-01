@@ -25,7 +25,7 @@ st.markdown("""
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card {
-            padding: 50px 0;  /* Only vertical padding */
+            padding: 20px 0;  /* Only vertical padding */
             background: none;  /* Remove background */
             box-shadow: none;
             margin: 2;
