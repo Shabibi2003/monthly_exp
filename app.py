@@ -17,36 +17,73 @@ st.markdown("""
         .main-header {
             text-align: center;
             color: #2c3e50;
-            padding: 20px;
+            padding: 30px;
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 10px;
-            margin-bottom: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card {
-            padding: 40px;  /* Increased padding for larger size */
-            border-radius: 10px;
+            padding: 50px;
+            border-radius: 15px;
             background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
         }
         .metric-card {
             text-align: center;
-            padding: 15px;
+            padding: 25px;
             background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 5px solid #007bff;
+            border-radius: 12px;
+            border-left: 6px solid #007bff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin: 10px 0;
+        }
+        .metric-card:hover {
+            background: #f1f3f5;
         }
         .stButton>button {
             width: 100%;
             background-color: #007bff;
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .stButton>button:hover {
+            background-color: #0056b3;
         }
         .chart-container {
             background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        .stSelectbox {
+            min-width: 200px;
+        }
+        .stTextInput>div>div>input {
+            padding: 12px;
+            font-size: 16px;
+        }
+        .stDataFrame {
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        div[data-testid="stExpander"] {
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
     </style>
 """, unsafe_allow_html=True)
