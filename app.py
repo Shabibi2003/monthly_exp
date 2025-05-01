@@ -12,42 +12,149 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 # Custom CSS styling
+# st.markdown("""
+#     <style>
+#         .main-header {
+#             text-align: center;
+#             color: #2c3e50;
+#             padding: 40px;
+#             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+#             border-radius: 15px;
+#             margin-bottom: 50px;
+#             font-size: 2.8em;
+#             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+#         }
+#         .card {
+#             padding: 40px 20px;
+#             background: none;
+#             box-shadow: none;
+#             margin: 0;
+#             border: none;
+#         }
+#         .metric-card {
+#             text-align: center;
+#             padding: 35px;
+#             background: #2d2d2d;
+#             border-radius: 12px;
+#             border-left: 6px solid #007bff;
+#             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+#             margin: 15px 0;
+#             color: white;
+#         }
+#         .chart-container {
+#             padding: 40px 20px;
+#             background: none;
+#             border: none;
+#             margin: 30px 0;
+#             color: white;
+#         }
+#         .stTextInput>div>div>input,
+#         .stSelectbox>div>div,
+#         .stNumberInput>div>div>input {
+#             padding: 15px !important;
+#             font-size: 16px !important;
+#         }
+#         .stDataFrame {
+#             font-size: 16px !important;
+#             padding: 20px 0 !important;
+#         }
+#         div[data-testid="stExpander"] {
+#             padding: 30px !important;
+#         }
+#         div[data-testid="stMetricValue"] {
+#             font-size: 28px !important;
+#         }
+#         div[data-testid="stMetricLabel"] {
+#             font-size: 16px !important;
+#         }
+
+#         /* === NEW ADDITIONS BELOW === */
+
+#         /* Larger, stylized tab buttons */
+#         button[data-baseweb="tab"] {
+#             font-size: 20px !important;
+#             padding: 15px 30px !important;
+#             font-weight: 600 !important;
+#             border-radius: 10px !important;
+#             color: #ffffff !important;
+#             background-color: #007bff !important;
+#             margin-right: 10px !important;
+#         }
+#         button[data-baseweb="tab"]:hover {
+#             background-color: #0056b3 !important;
+#             transition: background-color 0.3s ease;
+#         }
+#         button[data-baseweb="tab"][aria-selected="true"] {
+#             background-color: #0056b3 !important;
+#             border-bottom: 4px solid #ffcc00 !important;
+#         }
+
+#         /* Form Submit Button */
+#         div.stButton>button {
+#             background-color: #28a745;
+#             color: white;
+#             padding: 12px 30px;
+#             font-size: 18px;
+#             border-radius: 10px;
+#             transition: all 0.3s ease-in-out;
+#         }
+#         div.stButton>button:hover {
+#             background-color: #218838;
+#             transform: scale(1.05);
+#         }
+
+#         /* Info/success message */
+#         .element-container .stAlert-success {
+#             background-color: #d4edda;
+#             border-left: 5px solid #28a745;
+#             font-size: 16px;
+#             border-radius: 8px;
+#         }
+#         .element-container .stAlert-info,
+#         .element-container .stAlert-error {
+#             font-size: 16px;
+#             border-radius: 8px;
+#         }
+#     </style>
+# """, unsafe_allow_html=True)
+
 st.markdown("""
     <style>
         .main-header {
             text-align: center;
             color: #2c3e50;
-            padding: 40px;
+            padding: 20px;
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 15px;
-            margin-bottom: 50px;
-            font-size: 2.8em;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
         }
         .card {
-            padding: 40px 20px;
-            background: none;
-            box-shadow: none;
-            margin: 0;
-            border: none;
+            padding: 40px;  /* Increased padding for larger size */
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         .metric-card {
             text-align: center;
-            padding: 35px;
-            background: #2d2d2d;
-            border-radius: 12px;
-            border-left: 6px solid #007bff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+        .stButton>button {
+            width: 100%;
+            background-color: #007bff;
             color: white;
+            border-radius: 5px;
         }
         .chart-container {
-            padding: 40px 20px;
-            background: none;
-            border: none;
-            margin: 30px 0;
-            color: white;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .stTextInput>div>div>input,
         .stSelectbox>div>div,
         .stNumberInput>div>div>input {
@@ -117,6 +224,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 # Add this CSS rule in the existing style section
 st.markdown("""
     <style>
