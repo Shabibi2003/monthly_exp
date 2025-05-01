@@ -122,7 +122,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 with tab1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    transactions_df = fetch_transactions()
+    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
         # Add search and filter functionality
         search_term = st.text_input("🔍 Search transactions", "")
@@ -149,6 +149,7 @@ with tab1:
 st.markdown("<br>", unsafe_allow_html=True)
 
 with tab2:
+    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
         col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
         
@@ -223,7 +224,7 @@ with tab3:
             date_time = f"{date} {time}"
             add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
             st.success("Transaction added successfully!")
-            st.session_state['rerun'] = True  # Set rerun flag
+            st.experimental_rerun()  # Rerun the script to refresh the data
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -240,7 +241,7 @@ with tab3:
                 savings_date_time = f"{savings_date} {current_time}"
                 add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
                 st.success("Monthly savings added successfully!")
-                st.session_state['rerun'] = True  # Set rerun flag
+                st.experimental_rerun()  # Rerun the script to refresh the data
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
