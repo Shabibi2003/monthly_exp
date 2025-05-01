@@ -318,6 +318,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Define tabs first
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
+st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
+
 # Add a gap below the tabs
 st.markdown("""
     <style>
