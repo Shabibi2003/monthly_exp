@@ -364,10 +364,18 @@ st.markdown("<br>", unsafe_allow_html=True)
 with tab2:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
-        total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
+        # Only include non-savings for balance and total_in
+        total_in = transactions_df[
+            (transactions_df["transaction_type"] == "Cash In") &
+            (transactions_df["sub_category"] != "Monthly Savings")
+        ]["amount"].sum()
         total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
         balance = total_in - total_out
-        monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
+        # Monthly savings is always shown separately
+        monthly_savings = transactions_df[
+            (transactions_df["transaction_type"] == "Cash In") &
+            (transactions_df["sub_category"] == "Monthly Savings")
+        ]["amount"].sum()
 
         st.markdown(f"""
         <style>
@@ -483,6 +491,23 @@ with tab3:
     if st.button("Reload"):
         st.rerun()  # Rerun the script to refresh the data
 
+    # --- Monthly Saving Section ---
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
+    with st.form("monthly_saving_form"):
+        ms_date = st.date_input("Saving Date", key="ms_date")
+        ms_local_timezone = pytz.timezone("Asia/Kolkata")
+        ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
+        ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
+        ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
+        ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
+        ms_submit = st.form_submit_button("Add Monthly Saving")
+        if ms_submit:
+            ms_date_time = f"{ms_date} {ms_time}"
+            # Store as Cash In, sub_category="Monthly Savings"
+            add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
+            st.success("Monthly saving added successfully!")
+            st.session_state['rerun'] = True
 
 st.markdown("<br>", unsafe_allow_html=True)
 
