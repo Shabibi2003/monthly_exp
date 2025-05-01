@@ -218,7 +218,7 @@ with tab3:
 
         if transaction_type == "Cash In":
             sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
-            st.experimental_rerun()  # Reload the page when "Cash In" is selected
+            st.session_state['rerun'] = True  # Set rerun flag
         else:
             sub_category = None
             
@@ -229,7 +229,7 @@ with tab3:
             date_time = f"{date} {time}"
             add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
             st.success("Transaction added successfully!")
-            st.experimental_rerun()  # Reload the page after adding a transaction
+            st.session_state['rerun'] = True  # Set rerun flag
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
