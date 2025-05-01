@@ -426,3 +426,42 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
+
+# Remove .metric-card and .card from your CSS if you only want the Streamlit metrics as boxes
+st.markdown("""
+    <style>
+        .main-header {
+            text-align: center;
+            color: #2c3e50;
+            padding: 20px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        /* Style Streamlit metric boxes */
+        div[data-testid="metric-container"] {
+            background-color: #232323;
+            border-radius: 12px;
+            padding: 30px 10px 20px 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            border: 2px solid #444;
+            color: white !important;
+        }
+        div[data-testid="metric-container"] label,
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        div[data-testid="metric-container"] p {
+            color: white !important;
+        }
+        div[data-testid="metric-container"] [data-testid="stMetricLabel"] {
+            color: #bbb !important;
+        }
+        div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+            color: #fff !important;
+            font-size: 2em !important;
+        }
+        /* ... keep your other CSS ... */
+    </style>
+""", unsafe_allow_html=True)
