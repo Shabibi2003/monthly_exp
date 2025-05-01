@@ -294,10 +294,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Define tabs first
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
-# Then use the tabs
-# In tab1, replace the animation section with just the content
+# Transactions Tab
 with tab1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
         # Add search and filter functionality
@@ -307,7 +305,7 @@ with tab1:
             category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
-    
+
         # Apply filters
         filtered_df = transactions_df
         if search_term:
@@ -316,43 +314,40 @@ with tab1:
             filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
         if type_filter:
             filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
-    
+
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
-    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# Analytics Tab
 with tab2:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
     if not transactions_df.empty:
-        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
-        
+        col1, col2, col3, col4 = st.columns(4)
+
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Exclude monthly savings from total income
             total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
             st.metric("Total Income", f"₹{total_in:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
-            
+
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
             st.metric("Total Expenses", f"₹{total_out:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
-            
+
         with col3:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Calculate balance without monthly savings
             balance = total_in - total_out
             st.metric("Balance", f"₹{balance:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
-        
+
         with col4:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Display monthly savings separately
             monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
             st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
@@ -360,10 +355,10 @@ with tab2:
         # Interactive charts
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
-        
+
         # Filter out monthly savings from charts
         chart_df = transactions_df[transactions_df['sub_category'] != "Monthly Savings"]
-        
+
         if chart_type == "Category Distribution":
             fig = plt.figure(figsize=(10, 6))
             category_data = chart_df.groupby('category')['amount'].sum()
@@ -371,7 +366,7 @@ with tab2:
             plt.title("Expenses by Category")
             plt.savefig("category_distribution.png")
             st.image("category_distribution.png")
-            
+
         elif chart_type == "Time Series":
             fig = plt.figure(figsize=(10, 6))
             chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
@@ -380,7 +375,7 @@ with tab2:
             plt.title("Time Series of Transactions")
             plt.savefig("time_series.png")
             st.image("time_series.png")
-            
+
         elif chart_type == "Payment Methods":
             fig = plt.figure(figsize=(10, 6))
             payment_data = chart_df.groupby('payment_method')['amount'].sum()
@@ -388,13 +383,13 @@ with tab2:
             plt.title("Expenses by Payment Method")
             plt.savefig("payment_methods.png")
             st.image("payment_methods.png")
-        
+
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# Add Transaction Tab
 with tab3:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -404,29 +399,20 @@ with tab3:
             time = st.text_input("Time", current_time)
             transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
             category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
-        
+
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            
+
         payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
         submit = st.form_submit_button("Add Transaction")
 
         if submit:
             date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
             st.success("Transaction added successfully!")
-            st.balloons()  # Add confetti effect
+            st.balloons()
             st.session_state['rerun'] = True
-
-        # Remove this block as it's causing the error
-        # if savings_submit:
-        #     savings_date_time = f"{savings_date} {current_time}"
-        #     add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
-        #     st.success("Monthly savings added successfully!")
-        #     st.balloons()
-        #     st.session_state['rerun'] = True
-        st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
