@@ -27,18 +27,46 @@ st.markdown("""
         .card {
             padding: 50px;
             border-radius: 15px;
-            background-color: #ffffff;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            margin-bottom: 0;  /* Remove bottom margin */
+            background-color: #1e1e1e;  /* Dark background to match the app */
+            box-shadow: none;  /* Remove shadow */
+            margin: 0;  /* Remove all margins */
             transition: transform 0.3s ease;
         }
-        
+        .metric-card {
+            text-align: center;
+            padding: 25px;
+            background: #2d2d2d;  /* Darker background */
+            border-radius: 12px;
+            border-left: 6px solid #007bff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin: 10px 0;
+            color: white;  /* Light text */
+        }
+        .chart-container {
+            background: #1e1e1e;  /* Dark background */
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: white;
+        }
         /* Add red line style */
         .red-line {
             height: 2px;
             background: linear-gradient(to right, #ff4d4d, #ff9999);
             margin: 20px 0;
             border-radius: 1px;
+        }
+        /* Style for input fields and text */
+        .stTextInput>div>div>input {
+            background-color: #2d2d2d;
+            color: white;
+        }
+        .stSelectbox>div>div {
+            background-color: #2d2d2d;
+            color: white;
+        }
+        .stDataFrame {
+            background-color: #2d2d2d;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -110,9 +138,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Tabs for different sections
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
-st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
+
 
 with tab1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
