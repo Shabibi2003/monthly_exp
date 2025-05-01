@@ -155,7 +155,8 @@ with tab2:
         
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            total_in = transactions_df[transactions_df["transaction_type"] == "Cash In"]["amount"].sum()
+            # Exclude monthly savings from total income
+            total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
             st.metric("Total Income", f"₹{total_in:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
             
@@ -167,12 +168,14 @@ with tab2:
             
         with col3:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            balance = total_in - total_out  # Exclude monthly savings from balance calculation
+            # Calculate balance without monthly savings
+            balance = total_in - total_out
             st.metric("Balance", f"₹{balance:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
         
         with col4:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            # Display monthly savings separately
             monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
             st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
@@ -235,6 +238,10 @@ with tab3:
             st.success("Transaction added successfully!")
             st.session_state['rerun'] = True  # Set rerun flag
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # Add a reload button
+    if st.button("Reload"):
+        st.experimental_rerun()  # Rerun the script to refresh the data
 
     st.markdown("<br>", unsafe_allow_html=True)
 
