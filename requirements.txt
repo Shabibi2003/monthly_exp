@@ -5,3 +5,5 @@ matplotlib
 mysql-connector-python
 toml
 pytz
+streamlit-lottie
+
