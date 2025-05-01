@@ -141,10 +141,11 @@ st.markdown("""
             border-radius: 8px;
         }
         .red-line {
-                border-top: 3px red;
-                margin-top: 30px;
-                margin-bottom: 30px;
-            }
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
     </style>
 """, unsafe_allow_html=True)
 
