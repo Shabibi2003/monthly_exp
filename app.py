@@ -331,14 +331,14 @@ with tab2:
         balance = total_in - total_out
         monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
 
-        st.markdown("""
+        st.markdown(f"""
         <style>
-        .custom-metric-row {
+        .custom-metric-row {{
             display: flex;
             gap: 24px;
             margin-bottom: 30px;
-        }
-        .custom-metric-box {
+        }}
+        .custom-metric-box {{
             flex: 1;
             background: #232323;
             border-radius: 12px;
@@ -348,18 +348,18 @@ with tab2:
             color: white;
             text-align: center;
             min-width: 0;
-        }
-        .custom-metric-label {
+        }}
+        .custom-metric-label {{
             color: #bbb;
             font-size: 1.1em;
             margin-bottom: 8px;
             font-weight: 500;
-        }
-        .custom-metric-value {
+        }}
+        .custom-metric-value {{
             color: #fff;
             font-size: 2em;
             font-weight: bold;
-        }
+        }}
         </style>
         <div class="custom-metric-row">
             <div class="custom-metric-box">
