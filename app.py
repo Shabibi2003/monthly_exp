@@ -141,6 +141,46 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Update the CSS styles
+st.markdown("""
+    <style>
+        /* Fix for input and select box text visibility */
+        .stTextInput>div>div>input {
+            color: black !important;
+            background-color: white !important;
+        }
+        .stNumberInput>div>div>input {
+            color: black !important;
+            background-color: white !important;
+        }
+        .stSelectbox>div>div {
+            color: black !important;
+            background-color: white !important;
+        }
+        
+        /* Fix for metric cards in analytics */
+        div[data-testid="metric-container"] {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+            color: white !important;
+            width: 100%;
+        }
+        
+        div[data-testid="metric-container"] label {
+            color: white !important;
+        }
+        
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        
+        .metric-card {
+            padding: 5px !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Function to establish the MySQL (TiDB) connection
 def init_connection():
     return mysql.connector.connect(
