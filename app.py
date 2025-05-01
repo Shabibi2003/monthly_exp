@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
+from dotenv import load_dotenv
+import os
 
 st.set_page_config(
     page_title="Monthly Expenditure",
@@ -373,9 +375,10 @@ with st.expander("🗑️ Delete Transaction"):
 
 # --- Simple Login Section ---
 def check_login():
-    # In production, use environment variables or a secure vault for credentials!
-    USERNAME = "admin"
-    PASSWORD = "password123"
+    # Load credentials from .env file
+    load_dotenv()
+    USERNAME = os.getenv("LOGIN_ID")
+    PASSWORD = os.getenv("LOGIN_PASSWORD")
 
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
