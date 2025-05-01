@@ -29,61 +29,16 @@ st.markdown("""
             border-radius: 15px;
             background-color: #ffffff;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            margin-bottom: 0;  /* Remove bottom margin */
             transition: transform 0.3s ease;
         }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .metric-card {
-            text-align: center;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 6px solid #007bff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin: 10px 0;
-        }
-        .metric-card:hover {
-            background: #f1f3f5;
-        }
-        .stButton>button {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            border: none;
-            transition: background-color 0.3s ease;
-        }
-        .stButton>button:hover {
-            background-color: #0056b3;
-        }
-        .chart-container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        
+        /* Add red line style */
+        .red-line {
+            height: 2px;
+            background: linear-gradient(to right, #ff4d4d, #ff9999);
             margin: 20px 0;
-        }
-        .stSelectbox {
-            min-width: 200px;
-        }
-        .stTextInput>div>div>input {
-            padding: 12px;
-            font-size: 16px;
-        }
-        .stDataFrame {
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        div[data-testid="stExpander"] {
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 1px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -183,6 +138,7 @@ with tab1:
     else:
         st.info("No transactions recorded yet.")
     st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -222,30 +178,33 @@ with tab2:
         st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
+        # Filter out monthly savings from charts
+        chart_df = transactions_df[transactions_df['sub_category'] != "Monthly Savings"]
+        
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            category_data = transactions_df.groupby('category')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))
+            category_data = chart_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")  # Save as image
-            st.image("category_distribution.png")  # Display image
+            plt.savefig("category_distribution.png")
+            st.image("category_distribution.png")
             
         elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
-            time_data = transactions_df.groupby('date_time')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Transactions")
-            plt.savefig("time_series.png")  # Save as image
-            st.image("time_series.png")  # Display image
+            plt.savefig("time_series.png")
+            st.image("time_series.png")
             
         elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            payment_data = transactions_df.groupby('payment_method')['amount'].sum()
+            fig = plt.figure(figsize=(10, 6))
+            payment_data = chart_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")  # Save as image
-            st.image("payment_methods.png")  # Display image
+            plt.savefig("payment_methods.png")
+            st.image("payment_methods.png")
         
         st.markdown('</div>', unsafe_allow_html=True)
 
