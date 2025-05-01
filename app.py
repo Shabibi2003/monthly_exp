@@ -158,10 +158,10 @@ with col2:
         <style>
         .image-align {
             display: flex;
-            align-items: center;
+            align-items: right;
             justify-content: center;
             height: 100%;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
         }
         </style>
         """,
