@@ -256,6 +256,9 @@ st.markdown("""
     <div class="tab-gap"></div>
 """, unsafe_allow_html=True)
 
+# Add this line before using tab1, tab2, tab3
+tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+
 # Transactions Tab
 with tab1:
     transactions_df = fetch_transactions()
