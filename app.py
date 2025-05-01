@@ -210,7 +210,7 @@ with tab3:
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
             transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
-            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=(transaction_type == "Cash In"))
+            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
         
         with col2:
             description = st.text_input("Description")
