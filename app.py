@@ -294,6 +294,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Define tabs first
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 # Transactions Tab
 with tab1:
     transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
