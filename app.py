@@ -215,16 +215,31 @@ with tab3:
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-
-        sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"], disabled=(transaction_type == "Cash Out"))
             
         payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
         submit = st.form_submit_button("Add Transaction")
 
         if submit:
             date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
             st.success("Transaction added successfully!")
+            st.session_state['rerun'] = True  # Set rerun flag
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# New section for adding monthly savings
+with st.expander("➕ Add Monthly Savings"):
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    with st.form("monthly_savings_form"):
+        savings_date = st.date_input("Savings Date")
+        savings_amount = st.number_input("Savings Amount", min_value=0.0, step=0.01)
+        savings_submit = st.form_submit_button("Add Monthly Savings")
+
+        if savings_submit:
+            savings_date_time = f"{savings_date} {current_time}"
+            add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
+            st.success("Monthly savings added successfully!")
             st.session_state['rerun'] = True  # Set rerun flag
     st.markdown('</div>', unsafe_allow_html=True)
 
