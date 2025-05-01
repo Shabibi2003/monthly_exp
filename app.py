@@ -8,10 +8,11 @@ import pytz
 st.set_page_config(
     page_title="Monthly Expenditure",
     layout="wide",
-    page_icon = '📊',
+    page_icon='📊',
     initial_sidebar_state="expanded"
 )
-# Custom CSS styling
+
+# Essential CSS styling
 st.markdown("""
     <style>
         .main-header {
@@ -22,45 +23,23 @@ st.markdown("""
             border-radius: 10px;
             margin-bottom: 30px;
         }
-        .card {
-            padding: 40px;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .red-line {
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
-        .metric-card {
-            text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 5px solid #007bff;
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
         }
-        .stButton>button {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        /* Fix for input and select box text visibility */
-        input, textarea, select {
-            color: black !important;
-            background-color: white !important;
-        }
-        .stTextInput input, .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
-            color: black !important;
-            background-color: white !important;
-        }
-        .stSelectbox div[data-baseweb="select"] * {
-            color: black !important;
-            background-color: white !important;
-        }
+        /* Input and select box visibility */
+        .stTextInput>div>div>input,
+        .stNumberInput>div>div>input,
+        .stSelectbox>div>div,
+        .stSelectbox div[data-baseweb="select"] > div,
         .stSelectbox div[role="option"] {
             color: black !important;
             background-color: white !important;
@@ -69,20 +48,7 @@ st.markdown("""
             background-color: #007bff !important;
             color: white !important;
         }
-        .stDataFrame {
-            font-size: 16px !important;
-            padding: 20px 0 !important;
-        }
-        div[data-testid="stExpander"] {
-            padding: 30px !important;
-        }
-        div[data-testid="stMetricValue"] {
-            font-size: 28px !important;
-        }
-        div[data-testid="stMetricLabel"] {
-            font-size: 16px !important;
-        }
-        /* Fix for metric cards in analytics */
+        /* Metric cards in analytics */
         div[data-testid="metric-container"] {
             background-color: #2d2d2d;
             padding: 15px;
@@ -93,9 +59,6 @@ st.markdown("""
         div[data-testid="metric-container"] label,
         div[data-testid="metric-container"] div {
             color: white !important;
-        }
-        .metric-card {
-            padding: 5px !important;
         }
         /* Tab styling */
         button[data-baseweb="tab"] {
@@ -128,88 +91,6 @@ st.markdown("""
             background-color: #218838;
             transform: scale(1.05);
         }
-        /* Info/success message */
-        .element-container .stAlert-success {
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
-            font-size: 16px;
-            border-radius: 8px;
-        }
-        .element-container .stAlert-info,
-        .element-container .stAlert-error {
-            font-size: 16px;
-            border-radius: 8px;
-        }
-        .red-line {
-            border-top: 3px solid red;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-    </style>
-""", unsafe_allow_html=True)
-
-# Add this CSS rule in the existing style section
-st.markdown("""
-    <style>
-        /* Fix for select box text visibility */
-        .stSelectbox div[data-baseweb="select"] > div {
-            color: black !important;
-            background-color: white !important;
-        }
-        .stSelectbox div[data-baseweb="select"] > div:hover {
-            border-color: #007bff !important;
-        }
-        .stSelectbox div[role="listbox"] {
-            background-color: white !important;
-        }
-        .stSelectbox div[role="option"] {
-            color: black !important;
-        }
-        .stSelectbox div[role="option"]:hover {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Update the CSS styles
-st.markdown("""
-    <style>
-        /* Fix for input and select box text visibility */
-        .stTextInput>div>div>input {
-            color: black !important;
-            background-color: white !important;
-        }
-        .stNumberInput>div>div>input {
-            color: black !important;
-            background-color: white !important;
-        }
-        .stSelectbox>div>div {
-            color: black !important;
-            background-color: white !important;
-        }
-        
-        /* Fix for metric cards in analytics */
-        div[data-testid="metric-container"] {
-            background-color: #2d2d2d;
-            padding: 15px;
-            border-radius: 10px;
-            color: white !important;
-            width: 100%;
-        }
-        
-        div[data-testid="metric-container"] label {
-            color: white !important;
-        }
-        
-        div[data-testid="metric-container"] div {
-            color: white !important;
-        }
-        
-        .metric-card {
-            padding: 5px !important;
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -224,7 +105,6 @@ def init_connection():
         ssl_ca="ca-cert.pem"
     )
 
-# Function to add a transaction
 def add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method):
     conn = init_connection()
     cursor = conn.cursor()
@@ -235,7 +115,6 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn.commit()
     conn.close()
 
-# Function to remove a transaction by ID
 def remove_transaction(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
@@ -243,14 +122,12 @@ def remove_transaction(transaction_id):
     conn.commit()
     conn.close()
 
-# Function to fetch all transactions
 def fetch_transactions():
     conn = init_connection()
     transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
     conn.close()
     return transactions_df
 
-# Ensure table exists with updated schema
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
@@ -269,19 +146,7 @@ def create_table():
     conn.commit()
     conn.close()
 
-# Create table if not exists
 create_table()
-
-# Move the Lottie imports and functions here
-import requests
-from streamlit_lottie import st_lottie
-import json
-
-def load_lottie_url(url: str):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
 
 # Main UI
 col1, col2 = st.columns([4, 1])
@@ -306,18 +171,17 @@ with col2:
         st.markdown('<div class="image-align">', unsafe_allow_html=True)
         st.image(
             "https://media.licdn.com/dms/image/v2/D5603AQFgNHUC03jzNw/profile-displayphoto-shrink_200_200/B56ZXRPk5BHoAc-/0/1742972277971?e=1751500800&v=beta&t=dR5-I5xf4Ux-v7XxPZA-Fc-TM0pPucLJHJLVJaqw6LQ",
-            width=100
+            width=180
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
+
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Define tabs first
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
 st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 
-# Add a gap below the tabs
 st.markdown("""
     <style>
         .tab-gap {
@@ -329,18 +193,15 @@ st.markdown("""
 
 # Transactions Tab
 with tab1:
-    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        # Remove search functionality
         col1, col2 = st.columns(2)
         with col1:
             category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
 
-        # Add red line below filter section
         st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
-        # Apply filters
         filtered_df = transactions_df
         if category_filter:
             filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
@@ -350,23 +211,19 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
-    # st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after filter section
-
 
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Analytics Tab
 with tab2:
-    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        # Only include non-savings for balance and total_in
         total_in = transactions_df[
             (transactions_df["transaction_type"] == "Cash In") &
             (transactions_df["sub_category"] != "Monthly Savings")
         ]["amount"].sum()
         total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
         balance = total_in - total_out
-        # Monthly savings is always shown separately
         monthly_savings = transactions_df[
             (transactions_df["transaction_type"] == "Cash In") &
             (transactions_df["sub_category"] == "Monthly Savings")
@@ -376,29 +233,29 @@ with tab2:
         <style>
         .custom-metric-row {{
             display: flex;
-            gap: 12px; /* Reduced gap */
-            margin-bottom: 20px; /* Reduced margin */
+            gap: 12px;
+            margin-bottom: 20px;
         }}
         .custom-metric-box {{
             flex: 1;
             background: #232323;
-            border-radius: 8px; /* Slightly smaller radius */
-            padding: 12px 5px 8px 5px; /* Reduced padding */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* Slightly lighter shadow */
-            border: 1px solid #444; /* Thinner border */
+            border-radius: 8px;
+            padding: 12px 5px 8px 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            border: 1px solid #444;
             color: white;
             text-align: center;
             min-width: 0;
         }}
         .custom-metric-label {{
             color: #bbb;
-            font-size: 0.95em; /* Smaller label font */
+            font-size: 0.95em;
             margin-bottom: 4px;
             font-weight: 500;
         }}
         .custom-metric-value {{
             color: #fff;
-            font-size: 1.2em; /* Smaller value font */
+            font-size: 1.2em;
             font-weight: bold;
         }}
         </style>
@@ -422,44 +279,41 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        # Filter out Monthly Savings for charts
         chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
 
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(6, 4))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))
             category_data = chart_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")  # Save as image
-            st.image("category_distribution.png")  # Display image
+            plt.savefig("category_distribution.png")
+            st.image("category_distribution.png")
             
         elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(6, 4))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))
             chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
             time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Transactions")
-            plt.savefig("time_series.png")  # Save as image
-            st.image("time_series.png")  # Display image
+            plt.savefig("time_series.png")
+            st.image("time_series.png")
             
         elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(6, 4))  # Reduced size
+            fig = plt.figure(figsize=(6, 4))
             payment_data = chart_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")  # Save as image
-            st.image("payment_methods.png")  # Display image
+            plt.savefig("payment_methods.png")
+            st.image("payment_methods.png")
         
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-
 # Add Transaction Tab
 with tab3:
-    # st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -479,14 +333,13 @@ with tab3:
 
         if submit:
             date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
             st.success("Transaction added successfully!")
-            st.session_state['rerun'] = True  # Set rerun flag
+            st.session_state['rerun'] = True
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Add a reload button
     if st.button("Reload"):
-        st.rerun()  # Rerun the script to refresh the data
+        st.rerun()
 
     # --- Monthly Saving Section ---
     st.markdown("<br>", unsafe_allow_html=True)
@@ -501,14 +354,12 @@ with tab3:
         ms_submit = st.form_submit_button("Add Monthly Saving")
         if ms_submit:
             ms_date_time = f"{ms_date} {ms_time}"
-            # Store as Cash In, sub_category="Monthly Savings"
             add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
             st.success("Monthly saving added successfully!")
             st.session_state['rerun'] = True
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Delete transaction functionality
 with st.expander("🗑️ Delete Transaction"):
     with st.form("delete_form"):
         transaction_id = st.number_input("Transaction ID to Delete", min_value=1, step=1)
@@ -519,42 +370,3 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
-
-# Remove .metric-card and .card from your CSS if you only want the Streamlit metrics as boxes
-st.markdown("""
-    <style>
-        .main-header {
-            text-align: center;
-            color: #2c3e50;
-            padding: 20px;
-            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        /* Style Streamlit metric boxes */
-        div[data-testid="metric-container"] {
-            background-color: #232323;
-            border-radius: 12px;
-            padding: 30px 10px 20px 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-            border: 2px solid #444;
-            color: white !important;
-        }
-        div[data-testid="metric-container"] label,
-        div[data-testid="metric-container"] div {
-            color: white !important;
-        }
-        div[data-testid="metric-container"] p {
-            color: white !important;
-        }
-        div[data-testid="metric-container"] [data-testid="stMetricLabel"] {
-            color: #bbb !important;
-        }
-        div[data-testid="metric-container"] [data-testid="stMetricValue"] {
-            color: #fff !important;
-            font-size: 2em !important;
-        }
-        /* ... keep your other CSS ... */
-    </style>
-""", unsafe_allow_html=True)
