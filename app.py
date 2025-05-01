@@ -302,7 +302,7 @@ with col2:
         # Use the container to ensure the animation stays in the column
         with st.container():
             st.markdown('<div class="lottie-align">', unsafe_allow_html=True)
-            st_lottie(lottie_money, height=70, key="header_money")
+            st_lottie(lottie_money, height=120, key="header_money")
             st.markdown('</div>', unsafe_allow_html=True)
     except:
         st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
