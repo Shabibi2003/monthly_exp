@@ -140,6 +140,11 @@ st.markdown("""
             font-size: 16px;
             border-radius: 8px;
         }
+        .red-line {
+                border-top: 3px solid black;
+                margin-top: 30px;
+                margin-bottom: 30px;
+            }
     </style>
 """, unsafe_allow_html=True)
 
@@ -316,7 +321,7 @@ tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Tran
 st.markdown("""
     <style>
         .tab-gap {
-            margin-bottom: 40px;
+            margin-bottom: 70px;
         }
     </style>
     <div class="tab-gap"></div>
@@ -334,6 +339,8 @@ with tab1:
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
 
+        # Add red line below search section
+        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
         # Apply filters
         filtered_df = transactions_df
         if search_term:
