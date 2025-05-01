@@ -204,15 +204,18 @@ def load_lottie_url(url: str):
 
 # Add these Lottie animations after the page config
 # Loading Lottie Files
-lottie_money = load_lottie_url('https://assets4.lottiefiles.com/packages/lf20_3RKowV.json')
-lottie_analytics = load_lottie_url('https://assets7.lottiefiles.com/packages/lf20_qp1q7mct.json')
-lottie_add = load_lottie_url('https://assets9.lottiefiles.com/packages/lf20_5tl1xxnz.json')
+lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
+lottie_analytics = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
+lottie_add = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
 
-# Modify the tab sections to include animations
+# Add error handling for Lottie animations
 with tab1:
     col1, col2 = st.columns([1, 4])
     with col1:
-        st_lottie(lottie_money, height=150, key="money")
+        try:
+            st_lottie(lottie_money, height=150, key="money")
+        except:
+            st.markdown("💰", unsafe_allow_html=True)
     with col2:
         st.markdown('<div class="card">', unsafe_allow_html=True)
         transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
