@@ -291,27 +291,24 @@ with col2:
     st.markdown(
         """
         <style>
-        .lottie-align {
+        .image-align {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100%;
-            /* Remove or reduce top padding for better vertical alignment */
-            padding-bottom: 20;
+            padding-bottom: 20px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
-    try:
-        lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
-        # Use the container to ensure the animation stays in the column
-        with st.container():
-            st.markdown('<div class="lottie-align">', unsafe_allow_html=True)
-            st_lottie(lottie_money, height=100, key="header_money")
-            st.markdown('</div>', unsafe_allow_html=True)
-    except:
-        st.markdown('<div class="lottie-align">📊</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="image-align">', unsafe_allow_html=True)
+        st.image(
+            "https://media.licdn.com/dms/image/v2/D5603AQFgNHUC03jzNw/profile-displayphoto-shrink_200_200/B56ZXRPk5BHoAc-/0/1742972277971?e=1751500800&v=beta&t=dR5-I5xf4Ux-v7XxPZA-Fc-TM0pPucLJHJLVJaqw6LQ",
+            width=100
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
