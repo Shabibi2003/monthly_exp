@@ -290,13 +290,13 @@ with col2:
             align-items: center;
             justify-content: center;
             height: 100%;
-            padding-top: 10px;
+            padding-top: 5px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
-    
+
     try:
         lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
         with st.container():
