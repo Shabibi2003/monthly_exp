@@ -394,6 +394,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
 with tab3:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -403,20 +404,25 @@ with tab3:
             time = st.text_input("Time", current_time)
             transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
             category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
-
+        
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-
+            
         payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
         submit = st.form_submit_button("Add Transaction")
 
         if submit:
             date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
             st.success("Transaction added successfully!")
-            st.balloons()
-            st.session_state['rerun'] = True
+            st.session_state['rerun'] = True  # Set rerun flag
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Add a reload button
+    if st.button("Reload"):
+        st.rerun()  # Rerun the script to refresh the data
+
 
 st.markdown("<br>", unsafe_allow_html=True)
 
