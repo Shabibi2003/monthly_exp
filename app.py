@@ -326,52 +326,53 @@ with left_col:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-with right_col:
-    tab3, = st.tabs(["➕ Add Transaction"])
-    with tab3:
-        with st.form("transaction_form"):
-            col1, col2 = st.columns(2)
-            with col1:
-                date = st.date_input("Date")
-                local_timezone = pytz.timezone("Asia/Kolkata")
-                current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
-                time = st.text_input("Time", current_time)
-                transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
-                category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
-            
-            with col2:
-                description = st.text_input("Description")
-                amount = st.number_input("Amount", min_value=0.0, step=0.01)
-                
-            payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
-            submit = st.form_submit_button("Add Transaction")
+# --- Remove the right_col and Add Transaction tab entirely ---
+# with right_col:
+#     tab3, = st.tabs(["➕ Add Transaction"])
+#     with tab3:
+#         with st.form("transaction_form"):
+#             col1, col2 = st.columns(2)
+#             with col1:
+#                 date = st.date_input("Date")
+#                 local_timezone = pytz.timezone("Asia/Kolkata")
+#                 current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
+#                 time = st.text_input("Time", current_time)
+#                 transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+#                 category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
+#             
+#             with col2:
+#                 description = st.text_input("Description")
+#                 amount = st.number_input("Amount", min_value=0.0, step=0.01)
+#                 
+#             payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+#             submit = st.form_submit_button("Add Transaction")
+# 
+#             if submit:
+#                 date_time = f"{date} {time}"
+#                 add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
+#                 st.success("Transaction added successfully!")
+#                 st.session_state['rerun'] = True
+#         st.markdown('</div>', unsafe_allow_html=True)
 
-            if submit:
-                date_time = f"{date} {time}"
-                add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
-                st.success("Transaction added successfully!")
-                st.session_state['rerun'] = True
-        st.markdown('</div>', unsafe_allow_html=True)
+#         if st.button("Reload"):
+#             st.rerun()
 
-        if st.button("Reload"):
-            st.rerun()
-
-        # --- Monthly Saving Section ---
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
-        with st.form("monthly_saving_form"):
-            ms_date = st.date_input("Saving Date", key="ms_date")
-            ms_local_timezone = pytz.timezone("Asia/Kolkata")
-            ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
-            ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
-            ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
-            ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
-            ms_submit = st.form_submit_button("Add Monthly Saving")
-            if ms_submit:
-                ms_date_time = f"{ms_date} {ms_time}"
-                add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
-                st.success("Monthly saving added successfully!")
-                st.session_state['rerun'] = True
+# --- Monthly Saving Section ---
+# st.markdown("<br>", unsafe_allow_html=True)
+# st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
+# with st.form("monthly_saving_form"):
+#     ms_date = st.date_input("Saving Date", key="ms_date")
+#     ms_local_timezone = pytz.timezone("Asia/Kolkata")
+#     ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
+#     ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
+#     ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
+#     ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
+#     ms_submit = st.form_submit_button("Add Monthly Saving")
+#     if ms_submit:
+#         ms_date_time = f"{ms_date} {ms_time}"
+#         add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
+#         st.success("Monthly saving added successfully!")
+#         st.session_state['rerun'] = True
 
 st.markdown("<br>", unsafe_allow_html=True)
 
