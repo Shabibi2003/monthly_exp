@@ -206,39 +206,33 @@ st.markdown("<br>", unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
 # Then use the tabs
+# In tab1, replace the animation section with just the content
 with tab1:
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        try:
-            st_lottie(lottie_money, height=150, key="money")
-        except:
-            st.markdown("💰", unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
-        if not transactions_df.empty:
-            # Add search and filter functionality
-            search_term = st.text_input("🔍 Search transactions", "")
-            col1, col2 = st.columns(2)
-            with col1:
-                category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
-            with col2:
-                type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    if not transactions_df.empty:
+        # Add search and filter functionality
+        search_term = st.text_input("🔍 Search transactions", "")
+        col1, col2 = st.columns(2)
+        with col1:
+            category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
+        with col2:
+            type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
     
-            # Apply filters
-            filtered_df = transactions_df
-            if search_term:
-                filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
-            if category_filter:
-                filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
-            if type_filter:
-                filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
+        # Apply filters
+        filtered_df = transactions_df
+        if search_term:
+            filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
+        if category_filter:
+            filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
+        if type_filter:
+            filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
     
-            st.dataframe(filtered_df, use_container_width=True)
-        else:
-            st.info("No transactions recorded yet.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
+        st.dataframe(filtered_df, use_container_width=True)
+    else:
+        st.info("No transactions recorded yet.")
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)  # Add red line after search section
 
 st.markdown("<br>", unsafe_allow_html=True)
 
