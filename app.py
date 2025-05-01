@@ -4,6 +4,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
+from dotenv import load_dotenv
+import os
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # This must be called before os.getenv
+
+# --- Simple Login Section ---
+def check_login():
+    USERNAME = os.getenv("LOGIN_ID")
+    PASSWORD = os.getenv("LOGIN_PASSWORD")
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+    if not st.session_state["logged_in"]:
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username == USERNAME and password == PASSWORD:
+                st.session_state["logged_in"] = True
+                st.success("Login successful!")
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+        st.stop()  # Stop the app here if not logged in
+
+check_login()
 
 st.set_page_config(
     page_title="Monthly Expenditure",
@@ -148,37 +176,78 @@ def create_table():
 
 create_table()
 
-# Main UI
-col1, col2 = st.columns([4, 1])
-with col1:
-    st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
-with col2:
-    st.markdown(
-        """
-        <style>
-        .image-align {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding-bottom: 20px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    with st.container():
-        st.markdown('<div class="image-align">', unsafe_allow_html=True)
-        st.image(
-            "https://media.licdn.com/dms/image/v2/D5603AQFgNHUC03jzNw/profile-displayphoto-shrink_200_200/B56ZXRPk5BHoAc-/0/1742972277971?e=1751500800&v=beta&t=dR5-I5xf4Ux-v7XxPZA-Fc-TM0pPucLJHJLVJaqw6LQ",
-            width=180
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+# Main UI (single column, no photo)
+st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 
-
+# Add gap between header and analytics boxes
+st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+# --- Analytics Metrics (always visible, below header) ---
+transactions_df = fetch_transactions()
+if not transactions_df.empty:
+    total_in = transactions_df[
+        (transactions_df["transaction_type"] == "Cash In") &
+        (transactions_df["sub_category"] != "Monthly Savings")
+    ]["amount"].sum()
+    total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+    balance = total_in - total_out
+    monthly_savings = transactions_df[
+        (transactions_df["transaction_type"] == "Cash In") &
+        (transactions_df["sub_category"] == "Monthly Savings")
+    ]["amount"].sum()
+else:
+    total_in = total_out = balance = monthly_savings = 0
+
+st.markdown(f"""
+<style>
+.custom-metric-row {{
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}}
+.custom-metric-box {{
+    flex: 1;
+    background: #232323;
+    border-radius: 8px;
+    padding: 12px 5px 8px 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border: 1px solid #444;
+    color: white;
+    text-align: center;
+    min-width: 0;
+}}
+.custom-metric-label {{
+    color: #bbb;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+    font-weight: 500;
+}}
+.custom-metric-value {{
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+}}
+</style>
+<div class="custom-metric-row">
+    <div class="custom-metric-box">
+        <div class="custom-metric-label">Total Income</div>
+        <div class="custom-metric-value">₹{total_in:,.2f}</div>
+    </div>
+    <div class="custom-metric-box">
+        <div class="custom-metric-label">Total Expenses</div>
+        <div class="custom-metric-value">₹{total_out:,.2f}</div>
+    </div>
+    <div class="custom-metric-box">
+        <div class="custom-metric-label">Balance</div>
+        <div class="custom-metric-value">₹{balance:,.2f}</div>
+    </div>
+    <div class="custom-metric-box">
+        <div class="custom-metric-label">Monthly Savings</div>
+        <div class="custom-metric-value">₹{monthly_savings:,.2f}</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 
@@ -190,6 +259,9 @@ st.markdown("""
     </style>
     <div class="tab-gap"></div>
 """, unsafe_allow_html=True)
+
+# Add this line before using tab1, tab2, tab3
+tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
 # Transactions Tab
 with tab1:
@@ -370,3 +442,6 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
+
+# --- Simple Login Section ---
+
