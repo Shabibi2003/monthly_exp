@@ -179,6 +179,10 @@ create_table()
 # Main UI (single column, no photo)
 st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 
+# Add gap between header and analytics boxes
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
 # --- Analytics Metrics (always visible, below header) ---
 transactions_df = fetch_transactions()
 if not transactions_df.empty:
