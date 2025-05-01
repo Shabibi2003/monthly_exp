@@ -178,31 +178,18 @@ def create_table():
 create_table()
 
 # Main UI
-st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Tabs for different sections
-tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
-
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
-
-
-# Add these imports at the top
-import streamlit as st
+# Move this section up, right after the page config and before the CSS
+# Add these imports at the top (if not already present)
 import requests
 from streamlit_lottie import st_lottie
 import json
 
-# Add this function after the imports
 def load_lottie_url(url: str):
     r = requests.get(url)
     if r.status_code != 200:
         return None
     return r.json()
 
-# Add these Lottie animations after the page config
 # Loading Lottie Files
 lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
 lottie_analytics = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
