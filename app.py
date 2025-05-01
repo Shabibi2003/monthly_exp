@@ -373,29 +373,29 @@ with tab2:
         <style>
         .custom-metric-row {{
             display: flex;
-            gap: 24px;
-            margin-bottom: 30px;
+            gap: 12px; /* Reduced gap */
+            margin-bottom: 20px; /* Reduced margin */
         }}
         .custom-metric-box {{
             flex: 1;
             background: #232323;
-            border-radius: 12px;
-            padding: 28px 10px 18px 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-            border: 2px solid #444;
+            border-radius: 8px; /* Slightly smaller radius */
+            padding: 12px 5px 8px 5px; /* Reduced padding */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* Slightly lighter shadow */
+            border: 1px solid #444; /* Thinner border */
             color: white;
             text-align: center;
             min-width: 0;
         }}
         .custom-metric-label {{
             color: #bbb;
-            font-size: 1.1em;
-            margin-bottom: 8px;
+            font-size: 0.95em; /* Smaller label font */
+            margin-bottom: 4px;
             font-weight: 500;
         }}
         .custom-metric-value {{
             color: #fff;
-            font-size: 2em;
+            font-size: 1.2em; /* Smaller value font */
             font-weight: bold;
         }}
         </style>
