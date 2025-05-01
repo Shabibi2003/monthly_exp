@@ -189,19 +189,21 @@ with col2:
             align-items: right;
             justify-content: center;
             height: 100%;
-            padding-bottom: 10px;
+            padding-bottom: 40px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
+    
     with st.container():
         st.markdown('<div class="image-align">', unsafe_allow_html=True)
         st.image(
             "https://media.licdn.com/dms/image/v2/D5603AQFgNHUC03jzNw/profile-displayphoto-shrink_200_200/B56ZXRPk5BHoAc-/0/1742972277971?e=1751500800&v=beta&t=dR5-I5xf4Ux-v7XxPZA-Fc-TM0pPucLJHJLVJaqw6LQ",
-            width=180
+            width=130
         )
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 st.markdown("<br>", unsafe_allow_html=True)
