@@ -177,9 +177,7 @@ def create_table():
 # Create table if not exists
 create_table()
 
-# Main UI
-# Move this section up, right after the page config and before the CSS
-# Add these imports at the top (if not already present)
+# Move the Lottie imports and functions here
 import requests
 from streamlit_lottie import st_lottie
 import json
@@ -190,12 +188,24 @@ def load_lottie_url(url: str):
         return None
     return r.json()
 
-# Loading Lottie Files
-lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
-lottie_analytics = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
-lottie_add = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
+# Main UI
+col1, col2 = st.columns([4, 1])
+with col1:
+    st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
+with col2:
+    try:
+        lottie_money = load_lottie_url('https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json')
+        st_lottie(lottie_money, height=150, key="header_money")
+    except:
+        st.markdown("📊", unsafe_allow_html=True)
 
-# Add error handling for Lottie animations
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Define tabs first
+tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+
+# Then use the tabs
 with tab1:
     col1, col2 = st.columns([1, 4])
     with col1:
