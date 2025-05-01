@@ -8,10 +8,11 @@ import pytz
 st.set_page_config(
     page_title="Monthly Expenditure",
     layout="wide",
-    page_icon = '📊',
+    page_icon='📊',
     initial_sidebar_state="expanded"
 )
-# Custom CSS styling
+
+# Essential CSS styling
 st.markdown("""
     <style>
         .main-header {
@@ -22,31 +23,73 @@ st.markdown("""
             border-radius: 10px;
             margin-bottom: 30px;
         }
-        .card {
-            padding: 40px;  /* Increased padding for larger size */
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .red-line {
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
-        .metric-card {
-            text-align: center;
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+        /* Input and select box visibility */
+        .stTextInput>div>div>input,
+        .stNumberInput>div>div>input,
+        .stSelectbox>div>div,
+        .stSelectbox div[data-baseweb="select"] > div,
+        .stSelectbox div[role="option"] {
+            color: black !important;
+            background-color: white !important;
+        }
+        .stSelectbox div[role="option"]:hover {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        /* Metric cards in analytics */
+        div[data-testid="metric-container"] {
+            background-color: #2d2d2d;
             padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 5px solid #007bff;
-        }
-        .stButton>button {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-        .chart-container {
-            background: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: white !important;
+            width: 100%;
+        }
+        div[data-testid="metric-container"] label,
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        /* Tab styling */
+        button[data-baseweb="tab"] {
+            font-size: 20px !important;
+            padding: 15px 30px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            background-color: #007bff !important;
+            margin-right: 10px !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            background-color: #0056b3 !important;
+            transition: background-color 0.3s ease;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #0056b3 !important;
+            border-bottom: 4px solid #ffcc00 !important;
+        }
+        /* Form Submit Button */
+        div.stButton>button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        div.stButton>button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
         }
     </style>
 """, unsafe_allow_html=True)
@@ -62,7 +105,6 @@ def init_connection():
         ssl_ca="ca-cert.pem"
     )
 
-# Function to add a transaction
 def add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method):
     conn = init_connection()
     cursor = conn.cursor()
@@ -73,7 +115,6 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn.commit()
     conn.close()
 
-# Function to remove a transaction by ID
 def remove_transaction(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
@@ -81,14 +122,12 @@ def remove_transaction(transaction_id):
     conn.commit()
     conn.close()
 
-# Function to fetch all transactions
 def fetch_transactions():
     conn = init_connection()
     transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
     conn.close()
     return transactions_df
 
-# Ensure table exists with updated schema
 def create_table():
     conn = init_connection()
     cursor = conn.cursor()
@@ -107,36 +146,62 @@ def create_table():
     conn.commit()
     conn.close()
 
-# Create table if not exists
 create_table()
 
 # Main UI
-st.markdown('<h1 class="main-header">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+col1, col2 = st.columns([4, 1])
+with col1:
+    st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
+with col2:
+    st.markdown(
+        """
+        <style>
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    with st.container():
+        st.markdown('<div class="image-align">', unsafe_allow_html=True)
+        st.image(
+            "https://media.licdn.com/dms/image/v2/D5603AQFgNHUC03jzNw/profile-displayphoto-shrink_200_200/B56ZXRPk5BHoAc-/0/1742972277971?e=1751500800&v=beta&t=dR5-I5xf4Ux-v7XxPZA-Fc-TM0pPucLJHJLVJaqw6LQ",
+            width=180
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Tabs for different sections
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+        .tab-gap {
+            margin-bottom: 70px;
+        }
+    </style>
+    <div class="tab-gap"></div>
+""", unsafe_allow_html=True)
+
+# Transactions Tab
 with tab1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        # Add search and filter functionality
-        search_term = st.text_input("🔍 Search transactions", "")
         col1, col2 = st.columns(2)
         with col1:
             category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
 
-        # Apply filters
+        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
         filtered_df = transactions_df
-        if search_term:
-            filtered_df = filtered_df[filtered_df['description'].str.contains(search_term, case=False)]
         if category_filter:
             filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
         if type_filter:
@@ -145,77 +210,109 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# Analytics Tab
 with tab2:
-    transactions_df = fetch_transactions()  # Fetch transactions each time the tab is rendered
+    transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
-        
-        with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Exclude monthly savings from total income
-            total_in = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] != "Monthly Savings")]["amount"].sum()
-            st.metric("Total Income", f"₹{total_in:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-        with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-            st.metric("Total Expenses", f"₹{total_out:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-        with col3:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Calculate balance without monthly savings
-            balance = total_in - total_out
-            st.metric("Balance", f"₹{balance:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
-        
-        with col4:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            # Display monthly savings separately
-            monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
-            st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
-            st.markdown('</div>', unsafe_allow_html=True)
+        total_in = transactions_df[
+            (transactions_df["transaction_type"] == "Cash In") &
+            (transactions_df["sub_category"] != "Monthly Savings")
+        ]["amount"].sum()
+        total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
+        balance = total_in - total_out
+        monthly_savings = transactions_df[
+            (transactions_df["transaction_type"] == "Cash In") &
+            (transactions_df["sub_category"] == "Monthly Savings")
+        ]["amount"].sum()
 
-        # Interactive charts
-        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+        st.markdown(f"""
+        <style>
+        .custom-metric-row {{
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }}
+        .custom-metric-box {{
+            flex: 1;
+            background: #232323;
+            border-radius: 8px;
+            padding: 12px 5px 8px 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            border: 1px solid #444;
+            color: white;
+            text-align: center;
+            min-width: 0;
+        }}
+        .custom-metric-label {{
+            color: #bbb;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }}
+        .custom-metric-value {{
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: bold;
+        }}
+        </style>
+        <div class="custom-metric-row">
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Total Income</div>
+                <div class="custom-metric-value">₹{total_in:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Total Expenses</div>
+                <div class="custom-metric-value">₹{total_out:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Balance</div>
+                <div class="custom-metric-value">₹{balance:,.2f}</div>
+            </div>
+            <div class="custom-metric-box">
+                <div class="custom-metric-label">Monthly Savings</div>
+                <div class="custom-metric-value">₹{monthly_savings:,.2f}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
         if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            category_data = transactions_df.groupby('category')['amount'].sum()
+            fig = plt.figure(figsize=(6, 4))
+            category_data = chart_df.groupby('category')['amount'].sum()
             plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")  # Save as image
-            st.image("category_distribution.png")  # Display image
+            plt.savefig("category_distribution.png")
+            st.image("category_distribution.png")
             
         elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
-            time_data = transactions_df.groupby('date_time')['amount'].sum()
+            fig = plt.figure(figsize=(6, 4))
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Transactions")
-            plt.savefig("time_series.png")  # Save as image
-            st.image("time_series.png")  # Display image
+            plt.savefig("time_series.png")
+            st.image("time_series.png")
             
         elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(10, 6))  # Reduced size
-            payment_data = transactions_df.groupby('payment_method')['amount'].sum()
+            fig = plt.figure(figsize=(6, 4))
+            payment_data = chart_df.groupby('payment_method')['amount'].sum()
             plt.bar(payment_data.index, payment_data.values)
             plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")  # Save as image
-            st.image("payment_methods.png")  # Display image
+            plt.savefig("payment_methods.png")
+            st.image("payment_methods.png")
         
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# Add Transaction Tab
 with tab3:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -235,35 +332,33 @@ with tab3:
 
         if submit:
             date_time = f"{date} {time}"
-            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)  # Removed sub_category
+            add_transaction(date_time, category, description, amount, transaction_type, None, payment_method)
             st.success("Transaction added successfully!")
-            st.session_state['rerun'] = True  # Set rerun flag
+            st.session_state['rerun'] = True
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Add a reload button
     if st.button("Reload"):
-        st.rerun()  # Rerun the script to refresh the data
+        st.rerun()
 
+    # --- Monthly Saving Section ---
     st.markdown("<br>", unsafe_allow_html=True)
-
-    # New section for adding monthly savings
-    with st.expander("➕ Add Monthly Savings"):
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        with st.form("monthly_savings_form"):
-            savings_date = st.date_input("Savings Date")
-            savings_amount = st.number_input("Savings Amount", min_value=0.0, step=0.01)
-            savings_submit = st.form_submit_button("Add Monthly Savings")
-
-            if savings_submit:
-                savings_date_time = f"{savings_date} {current_time}"
-                add_transaction(savings_date_time, "Savings", "Monthly Savings", savings_amount, "Cash In", "Monthly Savings", "Online")
-                st.success("Monthly savings added successfully!")
-                st.session_state['rerun'] = True  # Set rerun flag
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<h4 style="margin-top:30px;">Add Monthly Saving</h4>', unsafe_allow_html=True)
+    with st.form("monthly_saving_form"):
+        ms_date = st.date_input("Saving Date", key="ms_date")
+        ms_local_timezone = pytz.timezone("Asia/Kolkata")
+        ms_current_time = datetime.now(ms_local_timezone).strftime('%H:%M:%S')
+        ms_time = st.text_input("Saving Time", ms_current_time, key="ms_time")
+        ms_amount = st.number_input("Saving Amount", min_value=0.0, step=0.01, key="ms_amount")
+        ms_payment_method = st.selectbox("Saving Payment Method", ["Cash", "Online"], key="ms_payment_method")
+        ms_submit = st.form_submit_button("Add Monthly Saving")
+        if ms_submit:
+            ms_date_time = f"{ms_date} {ms_time}"
+            add_transaction(ms_date_time, "Savings", "Monthly Saving", ms_amount, "Cash In", "Monthly Savings", ms_payment_method)
+            st.success("Monthly saving added successfully!")
+            st.session_state['rerun'] = True
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Delete transaction functionality
 with st.expander("🗑️ Delete Transaction"):
     with st.form("delete_form"):
         transaction_id = st.number_input("Transaction ID to Delete", min_value=1, step=1)
