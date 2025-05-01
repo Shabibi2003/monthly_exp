@@ -7,3 +7,4 @@ toml
 pytz
 streamlit-lottie
 requests
+python-dotenv
