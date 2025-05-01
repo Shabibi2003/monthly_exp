@@ -216,11 +216,7 @@ with tab3:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
 
-        if transaction_type == "Cash In":
-            sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
-            st.session_state['rerun'] = True  # Set rerun flag
-        else:
-            sub_category = None
+        sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"], disabled=(transaction_type == "Cash Out"))
             
         payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
         submit = st.form_submit_button("Add Transaction")
