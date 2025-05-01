@@ -22,7 +22,7 @@ st.markdown("""
             margin-bottom: 30px;
         }
         .card {
-            padding: 20px;
+            padding: 40px;  /* Increased padding for larger size */
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -218,6 +218,7 @@ with tab3:
 
         if transaction_type == "Cash In":
             sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
+            st.experimental_rerun()  # Reload the page when "Cash In" is selected
         else:
             sub_category = None
             
@@ -228,6 +229,7 @@ with tab3:
             date_time = f"{date} {time}"
             add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method)
             st.success("Transaction added successfully!")
+            st.experimental_rerun()  # Reload the page after adding a transaction
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
