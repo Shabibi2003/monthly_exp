@@ -150,7 +150,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 with tab2:
     if not transactions_df.empty:
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)  # Add a new column for monthly savings
         
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
@@ -166,8 +166,14 @@ with tab2:
             
         with col3:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            balance = total_in - total_out
+            balance = total_in - total_out  # Exclude monthly savings from balance calculation
             st.metric("Balance", f"₹{balance:,.2f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col4:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            monthly_savings = transactions_df[(transactions_df["transaction_type"] == "Cash In") & (transactions_df["sub_category"] == "Monthly Savings")]["amount"].sum()
+            st.metric("Monthly Savings", f"₹{monthly_savings:,.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
 
         # Interactive charts
@@ -203,12 +209,12 @@ with tab3:
             local_timezone = pytz.timezone("Asia/Kolkata")
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
-            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"])
+            transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
+            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=(transaction_type == "Cash In"))
         
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
 
         if transaction_type == "Cash In":
             sub_category = st.selectbox("Sub-Category", ["Monthly Savings", "Other Savings"])
