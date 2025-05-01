@@ -175,6 +175,7 @@ with col2:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
+
 st.markdown("<br>", unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
