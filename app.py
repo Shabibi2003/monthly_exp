@@ -394,8 +394,9 @@ with tab3:
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
             transaction_type = st.selectbox("Transaction Type", ["Cash In", "Cash Out"])
-            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Investment", "Others"], disabled=False)
+            category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
         
+
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
