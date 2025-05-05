@@ -254,19 +254,74 @@ st.markdown("""
 
 st.markdown("""
     <style>
-    /* ... existing CSS ... */
-    /* Limit width of input widgets in Add Transaction tab */
-    form#transaction_form .stTextInput, 
-    form#transaction_form .stNumberInput, 
-    form#transaction_form .stSelectbox, 
-    form#transaction_form .stDateInput, 
-    form#transaction_form .stRadio {
-        max-width: 350px !important;
-        min-width: 200px !important;
-        width: 100% !important;
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .main-header {
+            text-align: center;
+            color: #2c3e50;
+            padding: 20px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .red-line {
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+        /* Removed input and select box visibility overrides */
+        .stSelectbox div[role="option"]:hover {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        /* Metric cards in analytics */
+        div[data-testid="metric-container"] {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+            color: white !important;
+            width: 100%;
+        }
+        div[data-testid="metric-container"] label,
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        /* Tab styling */
+        button[data-baseweb="tab"] {
+            font-size: 20px !important;
+            padding: 15px 30px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            background-color: #007bff !important;
+            margin-right: 10px !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            background-color: #0056b3 !important;
+            transition: background-color 0.3s ease;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #0056b3 !important;
+            border-bottom: 4px solid #ffcc00 !important;
+        }
+        /* Form Submit Button */
+        div.stButton>button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        div.stButton>button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -396,6 +451,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
 with tab3:
+    st.markdown('<div class="custom-form-width">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         # First row: Date and Time
         row1_col1, row1_col2 = st.columns(2)
@@ -469,5 +525,90 @@ with st.expander("🗑️ Delete Transaction"):
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
-# --- Simple Login Section ---
+# Essential CSS styling
+st.markdown("""
+    <style>
+        .main-header {
+            text-align: center;
+            color: #2c3e50;
+            padding: 20px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .red-line {
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+        /* Removed input and select box visibility overrides */
+        .stSelectbox div[role="option"]:hover {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        /* Metric cards in analytics */
+        div[data-testid="metric-container"] {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+            color: white !important;
+            width: 100%;
+        }
+        div[data-testid="metric-container"] label,
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        /* Tab styling */
+        button[data-baseweb="tab"] {
+            font-size: 20px !important;
+            padding: 15px 30px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            background-color: #007bff !important;
+            margin-right: 10px !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            background-color: #0056b3 !important;
+            transition: background-color 0.3s ease;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #0056b3 !important;
+            border-bottom: 4px solid #ffcc00 !important;
+        }
+        /* Form Submit Button */
+        div.stButton>button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        div.stButton>button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Limit width of input widgets in Add Transaction tab
+.custom-form-width .stTextInput,
+.custom-form-width .stNumberInput,
+.custom-form-width .stSelectbox,
+.custom-form-width .stDateInput,
+.custom-form-width .stRadio {
+    max-width: 350px !important;
+    min-width: 200px !important;
+    width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+}
 
