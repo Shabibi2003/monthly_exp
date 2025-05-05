@@ -444,6 +444,61 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
 with tab3:
+    # --- Add custom CSS for Add Transaction section ---
+    st.markdown("""
+    <style>
+    .add-transaction-container {
+        max-width: 520px;
+        margin: 0 auto 32px auto;
+        padding: 32px 28px 24px 28px;
+        background: #f7fafd;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.13);
+        border: 1px solid #e3e6f0;
+    }
+    .add-transaction-title {
+        font-size: 1.6em;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    .stTextInput>div>div>input, .stNumberInput>div>div>input, .stSelectbox>div>div {
+        border-radius: 8px !important;
+        border: 1.5px solid #b2bec3 !important;
+        padding: 10px !important;
+        font-size: 1.08em !important;
+        background: #fff !important;
+        margin-bottom: 12px !important;
+    }
+    .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {
+        border: 2px solid #007bff !important;
+        background: #eaf6ff !important;
+    }
+    div.stButton>button {
+        background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+        color: white;
+        font-size: 1.15em;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 12px 0;
+        width: 100%;
+        margin-top: 10px;
+        box-shadow: 0 2px 8px rgba(0,123,255,0.10);
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        letter-spacing: 0.5px;
+    }
+    div.stButton>button:hover {
+        background: linear-gradient(90deg, #0056b3 0%, #00aaff 100%);
+        transform: scale(1.04);
+        box-shadow: 0 4px 16px rgba(0,123,255,0.18);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    # --- End custom CSS ---
+
+    st.markdown('<div class="add-transaction-container">', unsafe_allow_html=True)
+    st.markdown('<div class="add-transaction-title">Add Transaction</div>', unsafe_allow_html=True)
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -453,13 +508,9 @@ with tab3:
             time = st.text_input("Time", current_time)
             transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
             category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
-        
-        
-
         with col2:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            
         payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
         submit = st.form_submit_button("Add Transaction")
 
