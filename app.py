@@ -19,7 +19,58 @@ def check_login():
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
     if not st.session_state["logged_in"]:
-        st.title("Login")
+        # --- Add custom CSS for login page ---
+        st.markdown("""
+        <style>
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto 0 auto;
+            padding: 32px 24px 24px 24px;
+            background: #f7fafd;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(44, 62, 80, 0.13);
+            border: 1px solid #e3e6f0;
+            text-align: center;
+        }
+        .login-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 18px;
+        }
+        .stTextInput>div>div>input {
+            border-radius: 8px !important;
+            border: 1.5px solid #b2bec3 !important;
+            padding: 10px !important;
+            font-size: 1.1em !important;
+            background: #fff !important;
+            margin-bottom: 12px !important;
+        }
+        .stTextInput>div>div>input:focus {
+            border: 2px solid #007bff !important;
+            background: #eaf6ff !important;
+        }
+        div.stButton>button {
+            background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 0;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s, transform 0.2s;
+        }
+        div.stButton>button:hover {
+            background: linear-gradient(90deg, #0056b3 0%, #00aaff 100%);
+            transform: scale(1.03);
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        # --- End custom CSS ---
+
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        st.markdown('<div class="login-title">Login</div>', unsafe_allow_html=True)
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
@@ -29,6 +80,7 @@ def check_login():
                 st.rerun()
             else:
                 st.error("Invalid username or password")
+        st.markdown('</div>', unsafe_allow_html=True)
         st.stop()  # Stop the app here if not logged in
 
 check_login()
