@@ -422,7 +422,14 @@ with tab2:
             (transactions_df["transaction_type"] == "Cash Out")
         ]
 
-        chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
+        chart_type = st.selectbox("Select Chart Type", [
+            "Category Distribution", 
+            "Time Series", 
+            "Payment Methods",
+            "Daily Expenses",
+            "Monthly Trend",
+            "Category Comparison"
+        ])
         
         if chart_type == "Category Distribution":
             fig = plt.figure(figsize=(6, 4))
@@ -438,6 +445,8 @@ with tab2:
             time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
             plt.title("Time Series of Expenses")
+            plt.xticks(rotation=45)
+            plt.tight_layout()
             plt.savefig("time_series.png")
             st.image("time_series.png")
             
@@ -448,6 +457,50 @@ with tab2:
             plt.title("Expenses by Payment Method")
             plt.savefig("payment_methods.png")
             st.image("payment_methods.png")
+            
+        elif chart_type == "Daily Expenses":
+            fig = plt.figure(figsize=(10, 5))
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            chart_df['day_of_week'] = chart_df['date_time'].dt.day_name()
+            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            daily_expenses = chart_df.groupby('day_of_week')['amount'].mean().reindex(day_order)
+            plt.bar(daily_expenses.index, daily_expenses.values)
+            plt.title("Average Daily Expenses")
+            plt.xticks(rotation=45)
+            plt.ylabel("Amount (₹)")
+            plt.tight_layout()
+            plt.savefig("daily_expenses.png")
+            st.image("daily_expenses.png")
+            
+        elif chart_type == "Monthly Trend":
+            fig = plt.figure(figsize=(10, 5))
+            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
+            monthly_expenses = chart_df.groupby('month')['amount'].sum()
+            plt.plot(monthly_expenses.index, monthly_expenses.values, marker='o')
+            plt.title("Monthly Expense Trend")
+            plt.xticks(rotation=45)
+            plt.ylabel("Total Amount (₹)")
+            plt.grid(True, linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig("monthly_trend.png")
+            st.image("monthly_trend.png")
+            
+        elif chart_type == "Category Comparison":
+            fig = plt.figure(figsize=(10, 5))
+            category_monthly = chart_df.pivot_table(
+                index='month',
+                columns='category',
+                values='amount',
+                aggfunc='sum'
+            ).fillna(0)
+            category_monthly.plot(kind='bar', stacked=True)
+            plt.title("Monthly Expenses by Category")
+            plt.xlabel("Month")
+            plt.ylabel("Amount (₹)")
+            plt.legend(title="Categories", bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.tight_layout()
+            plt.savefig("category_comparison.png")
+            st.image("category_comparison.png")
         
         st.markdown('</div>', unsafe_allow_html=True)
 
