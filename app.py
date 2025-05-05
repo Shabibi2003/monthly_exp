@@ -19,17 +19,101 @@ def check_login():
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
     if not st.session_state["logged_in"]:
-        st.title("Login")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+        st.markdown("""
+            <style>
+            .login-container {
+                max-width: 400px;
+                margin: 50px auto;
+                padding: 30px;
+                background: linear-gradient(145deg, #2d2d2d, #353535);
+                border-radius: 20px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                animation: fadeIn 0.5s ease-out;
+            }
+            .login-header {
+                text-align: center;
+                color: #fff;
+                margin-bottom: 30px;
+                font-size: 2em;
+                font-weight: 600;
+            }
+            .login-icon {
+                font-size: 50px;
+                text-align: center;
+                margin-bottom: 20px;
+                color: #007bff;
+            }
+            .stTextInput input {
+                background: rgba(255,255,255,0.05);
+                border: 2px solid rgba(255,255,255,0.1);
+                border-radius: 12px;
+                padding: 12px 20px;
+                color: white;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+            .stTextInput input:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+                background: rgba(255,255,255,0.1);
+            }
+            .stButton>button {
+                width: 100%;
+                background: linear-gradient(45deg, #007bff, #00bfff);
+                color: white;
+                padding: 12px 0;
+                font-size: 18px;
+                font-weight: 600;
+                border: none;
+                border-radius: 12px;
+                cursor: pointer;
+                margin-top: 20px;
+                transition: all 0.3s ease;
+            }
+            .stButton>button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,123,255,0.4);
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .error-message {
+                background: rgba(255,59,48,0.1);
+                color: #ff3b30;
+                padding: 10px;
+                border-radius: 8px;
+                text-align: center;
+                margin-top: 15px;
+                animation: shake 0.5s ease-in-out;
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+            </style>
+            <div class="login-container">
+                <div class="login-icon">🔐</div>
+                <h1 class="login-header">Welcome Back</h1>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        
         if st.button("Login"):
             if username == USERNAME and password == PASSWORD:
                 st.session_state["logged_in"] = True
                 st.success("Login successful!")
                 st.rerun()
             else:
-                st.error("Invalid username or password")
-        st.stop()  # Stop the app here if not logged in
+                st.markdown("""
+                    <div class="error-message">
+                        ❌ Invalid username or password
+                    </div>
+                """, unsafe_allow_html=True)
+        st.stop()
 
 check_login()
 
