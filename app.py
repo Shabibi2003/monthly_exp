@@ -69,18 +69,20 @@ def check_login():
         """, unsafe_allow_html=True)
         # --- End custom CSS ---
 
-        st.markdown('<div class="login-container">', unsafe_allow_html=True)
-        st.markdown('<div class="login-title">Login</div>', unsafe_allow_html=True)
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if username == USERNAME and password == PASSWORD:
-                st.session_state["logged_in"] = True
-                st.success("Login successful!")
-                st.rerun()
-            else:
-                st.error("Invalid username or password")
-        st.markdown('</div>', unsafe_allow_html=True)
+        # Use Streamlit container for proper widget placement
+        with st.container():
+            st.markdown('<div class="login-container">', unsafe_allow_html=True)
+            st.markdown('<div class="login-title">Login</div>', unsafe_allow_html=True)
+            username = st.text_input("Username", key="login_username")
+            password = st.text_input("Password", type="password", key="login_password")
+            if st.button("Login"):
+                if username == USERNAME and password == PASSWORD:
+                    st.session_state["logged_in"] = True
+                    st.success("Login successful!")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password")
+            st.markdown('</div>', unsafe_allow_html=True)
         st.stop()  # Stop the app here if not logged in
 
 check_login()
@@ -463,17 +465,29 @@ with tab3:
         margin-bottom: 18px;
         text-align: center;
     }
-    .stTextInput>div>div>input, .stNumberInput>div>div>input, .stSelectbox>div>div {
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div,
+    .stSelectbox div[data-baseweb="select"] > div,
+    .stSelectbox div[role="option"] {
+        color: #222 !important;
+        background: #fff !important;
         border-radius: 8px !important;
         border: 1.5px solid #b2bec3 !important;
         padding: 10px !important;
         font-size: 1.08em !important;
-        background: #fff !important;
         margin-bottom: 12px !important;
     }
-    .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {
+    .stTextInput > div > div > input::placeholder,
+    .stNumberInput > div > div > input::placeholder {
+        color: #888 !important;
+        opacity: 1 !important;
+    }
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
         border: 2px solid #007bff !important;
         background: #eaf6ff !important;
+        color: #222 !important;
     }
     div.stButton>button {
         background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
