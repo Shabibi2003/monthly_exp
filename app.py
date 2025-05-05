@@ -46,78 +46,97 @@ st.markdown("""
         .main-header {
             text-align: center;
             color: #2c3e50;
-            padding: 20px;
+            padding: 25px;
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 10px;
+            border-radius: 15px;
             margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .red-line {
-            border-top: 3px solid red;
-            margin-top: 30px;
-            margin-bottom: 30px;
+        .custom-metric-box {
+            flex: 1;
+            background: linear-gradient(145deg, #2d2d2d, #353535);
+            border-radius: 12px;
+            padding: 15px 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 1px solid #444;
+            color: white;
+            text-align: center;
+            min-width: 0;
+            transition: transform 0.2s ease;
         }
-        .image-align {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding-bottom: 20px;
+        .custom-metric-box:hover {
+            transform: translateY(-3px);
         }
-        /* Input and select box visibility */
-        .stTextInput>div>div>input,
-        .stNumberInput>div>div>input,
-        .stSelectbox>div>div,
-        .stSelectbox div[data-baseweb="select"] > div,
-        .stSelectbox div[role="option"] {
-            color: black !important;
-            background-color: white !important;
+        .custom-metric-label {
+            color: #e0e0e0;
+            font-size: 1em;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
-        .stSelectbox div[role="option"]:hover {
-            background-color: #007bff !important;
-            color: white !important;
+        .custom-metric-value {
+            color: #fff;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
-        /* Metric cards in analytics */
-        div[data-testid="metric-container"] {
-            background-color: #2d2d2d;
+        /* Form styling */
+        div.stTextInput input {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        div.stTextInput input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        div.stSelectbox > div {
+            border-radius: 8px;
+        }
+        /* Chart container styling */
+        div.stImage {
+            background: white;
             padding: 15px;
-            border-radius: 10px;
-            color: white !important;
-            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin: 10px 0;
         }
-        div[data-testid="metric-container"] label,
-        div[data-testid="metric-container"] div {
-            color: white !important;
-        }
-        /* Tab styling */
+        /* Tab styling improvements */
         button[data-baseweb="tab"] {
-            font-size: 20px !important;
-            padding: 15px 30px !important;
-            font-weight: 600 !important;
-            border-radius: 10px !important;
-            color: #ffffff !important;
-            background-color: #007bff !important;
-            margin-right: 10px !important;
+            font-size: 18px !important;
+            padding: 12px 25px !important;
+            font-weight: 500 !important;
+            border-radius: 12px !important;
+            background-color: rgba(0,123,255,0.8) !important;
+            margin-right: 12px !important;
+            transition: all 0.3s ease !important;
         }
         button[data-baseweb="tab"]:hover {
-            background-color: #0056b3 !important;
-            transition: background-color 0.3s ease;
+            background-color: rgba(0,86,179,0.9) !important;
+            transform: translateY(-2px);
         }
-        button[data-baseweb="tab"][aria-selected="true"] {
-            background-color: #0056b3 !important;
-            border-bottom: 4px solid #ffcc00 !important;
-        }
-        /* Form Submit Button */
+        /* Form Submit Button enhancement */
         div.stButton>button {
-            background-color: #28a745;
+            background: linear-gradient(145deg, #28a745, #218838);
             color: white;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
+            padding: 12px 35px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         div.stButton>button:hover {
-            background-color: #218838;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        /* Login form styling */
+        div[data-testid="stForm"] {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 """, unsafe_allow_html=True)
@@ -132,8 +151,6 @@ def init_connection():
         database="fortune500",
         ssl_ca="ca-cert.pem"
     )
-
-
 
 def add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method):
     conn = init_connection()
@@ -262,6 +279,79 @@ st.markdown("""
     <div class="tab-gap"></div>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+        .main-header {
+            text-align: center;
+            color: #2c3e50;
+            padding: 20px;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .red-line {
+            border-top: 3px solid red;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .image-align {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+        /* Removed input and select box visibility overrides */
+        .stSelectbox div[role="option"]:hover {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        /* Metric cards in analytics */
+        div[data-testid="metric-container"] {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+            color: white !important;
+            width: 100%;
+        }
+        div[data-testid="metric-container"] label,
+        div[data-testid="metric-container"] div {
+            color: white !important;
+        }
+        /* Tab styling */
+        button[data-baseweb="tab"] {
+            font-size: 20px !important;
+            padding: 15px 30px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            background-color: #007bff !important;
+            margin-right: 10px !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            background-color: #0056b3 !important;
+            transition: background-color 0.3s ease;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #0056b3 !important;
+            border-bottom: 4px solid #ffcc00 !important;
+        }
+        /* Form Submit Button */
+        div.stButton>button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        div.stButton>button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Add this line before using tab1, tab2, tab3
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
@@ -353,13 +443,20 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        # Exclude both Monthly Savings and Salary from charts
         chart_df = transactions_df[
             (transactions_df["sub_category"] != "Monthly Savings") &
-            (transactions_df["category"] != "Salary")
+            (transactions_df["category"] != "Salary") &
+            (transactions_df["transaction_type"] == "Cash Out")
         ]
 
-        chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
+        chart_type = st.selectbox("Select Chart Type", [
+            "Category Distribution", 
+            "Time Series", 
+            "Payment Methods",
+            "Daily Expenses",
+            "Monthly Trend",
+            "Category Comparison"
+        ])
         
         if chart_type == "Category Distribution":
             fig = plt.figure(figsize=(6, 4))
@@ -374,7 +471,9 @@ with tab2:
             chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
             time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
-            plt.title("Time Series of Transactions")
+            plt.title("Time Series of Expenses")
+            plt.xticks(rotation=45)
+            plt.tight_layout()
             plt.savefig("time_series.png")
             st.image("time_series.png")
             
@@ -385,6 +484,60 @@ with tab2:
             plt.title("Expenses by Payment Method")
             plt.savefig("payment_methods.png")
             st.image("payment_methods.png")
+            
+        elif chart_type == "Daily Expenses":
+            fig = plt.figure(figsize=(10, 5))
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            chart_df['day_of_week'] = chart_df['date_time'].dt.day_name()
+            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            daily_expenses = chart_df.groupby('day_of_week')['amount'].mean().reindex(day_order)
+            plt.bar(daily_expenses.index, daily_expenses.values)
+            plt.title("Average Daily Expenses")
+            plt.xticks(rotation=45)
+            plt.ylabel("Amount (₹)")
+            plt.tight_layout()
+            plt.savefig("daily_expenses.png")
+            st.image("daily_expenses.png")
+            
+        elif chart_type == "Monthly Trend":
+            fig = plt.figure(figsize=(10, 5))
+            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
+            monthly_expenses = chart_df.groupby('month')['amount'].sum()
+            plt.plot(monthly_expenses.index, monthly_expenses.values, marker='o')
+            plt.title("Monthly Expense Trend")
+            plt.xticks(rotation=45)
+            plt.ylabel("Total Amount (₹)")
+            plt.grid(True, linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig("monthly_trend.png")
+            st.image("monthly_trend.png")
+            
+        elif chart_type == "Category Comparison":
+            fig = plt.figure(figsize=(10, 5))
+            # First ensure date_time is datetime
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            # Create month column before pivot
+            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
+            
+            # Create pivot table with explicit month column
+            category_monthly = pd.pivot_table(
+                data=chart_df,
+                values='amount',
+                index='month',
+                columns='category',
+                aggfunc='sum',
+                fill_value=0
+            )
+            
+            # Plot the stacked bar chart
+            category_monthly.plot(kind='bar', stacked=True)
+            plt.title("Monthly Expenses by Category")
+            plt.xlabel("Month")
+            plt.ylabel("Amount (₹)")
+            plt.legend(title="Categories", bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.tight_layout()
+            plt.savefig("category_comparison.png")
+            st.image("category_comparison.png")
         
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -392,23 +545,38 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
 with tab3:
+    st.markdown('<div class="custom-form-width">', unsafe_allow_html=True)
     with st.form("transaction_form"):
-        col1, col2 = st.columns(2)
-        with col1:
+        # First row: Date and Time
+        row1_col1, row1_col2 = st.columns(2)
+        with row1_col1:
             date = st.date_input("Date")
+        with row1_col2:
             local_timezone = pytz.timezone("Asia/Kolkata")
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
-            transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
-            category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
-        
-        
 
-        with col2:
-            description = st.text_input("Description")
+        # Second row: Amount and Description
+        row2_col1, row2_col2 = st.columns(2)
+        with row2_col1:
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            
-        payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+        with row2_col2:
+            description = st.text_input("Description")
+
+        # Place Transaction Type and Category side by side
+        col5, col6 = st.columns(2)
+        with col5:
+            transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
+        with col6:
+            category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
+
+        payment_method = st.radio(
+            "Payment Method",
+            options=["💵 Cash", "💳 Online"],
+            horizontal=True,
+            key="payment_method_radio"
+        )
+        payment_method = "Cash" if payment_method == "💵 Cash" else "Online"
         submit = st.form_submit_button("Add Transaction")
 
         if submit:
@@ -450,6 +618,14 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
+
+                #END
+                
+
+
+
+
+
 
 
 
