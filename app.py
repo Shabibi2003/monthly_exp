@@ -22,9 +22,9 @@ def check_login():
         st.markdown("""
             <style>
             .login-container {
-                max-width: 400px;
-                margin: 50px auto;
-                padding: 30px;
+                max-width: 600px;
+                margin: 60px auto;
+                padding: 40px;
                 background: linear-gradient(145deg, #2d2d2d, #353535);
                 border-radius: 20px;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.2);
