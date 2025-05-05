@@ -46,70 +46,97 @@ st.markdown("""
         .main-header {
             text-align: center;
             color: #2c3e50;
-            padding: 20px;
+            padding: 25px;
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 10px;
+            border-radius: 15px;
             margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .red-line {
-            border-top: 3px solid red;
-            margin-top: 30px;
-            margin-bottom: 30px;
+        .custom-metric-box {
+            flex: 1;
+            background: linear-gradient(145deg, #2d2d2d, #353535);
+            border-radius: 12px;
+            padding: 15px 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 1px solid #444;
+            color: white;
+            text-align: center;
+            min-width: 0;
+            transition: transform 0.2s ease;
         }
-        .image-align {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding-bottom: 20px;
+        .custom-metric-box:hover {
+            transform: translateY(-3px);
         }
-        /* Removed input and select box visibility overrides */
-        .stSelectbox div[role="option"]:hover {
-            background-color: #007bff !important;
-            color: white !important;
+        .custom-metric-label {
+            color: #e0e0e0;
+            font-size: 1em;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
-        /* Metric cards in analytics */
-        div[data-testid="metric-container"] {
-            background-color: #2d2d2d;
+        .custom-metric-value {
+            color: #fff;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        /* Form styling */
+        div.stTextInput input {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        div.stTextInput input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        div.stSelectbox > div {
+            border-radius: 8px;
+        }
+        /* Chart container styling */
+        div.stImage {
+            background: white;
             padding: 15px;
-            border-radius: 10px;
-            color: white !important;
-            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin: 10px 0;
         }
-        div[data-testid="metric-container"] label,
-        div[data-testid="metric-container"] div {
-            color: white !important;
-        }
-        /* Tab styling */
+        /* Tab styling improvements */
         button[data-baseweb="tab"] {
-            font-size: 20px !important;
-            padding: 15px 30px !important;
-            font-weight: 600 !important;
-            border-radius: 10px !important;
-            color: #ffffff !important;
-            background-color: #007bff !important;
-            margin-right: 10px !important;
+            font-size: 18px !important;
+            padding: 12px 25px !important;
+            font-weight: 500 !important;
+            border-radius: 12px !important;
+            background-color: rgba(0,123,255,0.8) !important;
+            margin-right: 12px !important;
+            transition: all 0.3s ease !important;
         }
         button[data-baseweb="tab"]:hover {
-            background-color: #0056b3 !important;
-            transition: background-color 0.3s ease;
+            background-color: rgba(0,86,179,0.9) !important;
+            transform: translateY(-2px);
         }
-        button[data-baseweb="tab"][aria-selected="true"] {
-            background-color: #0056b3 !important;
-            border-bottom: 4px solid #ffcc00 !important;
-        }
-        /* Form Submit Button */
+        /* Form Submit Button enhancement */
         div.stButton>button {
-            background-color: #28a745;
+            background: linear-gradient(145deg, #28a745, #218838);
             color: white;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
+            padding: 12px 35px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         div.stButton>button:hover {
-            background-color: #218838;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        /* Login form styling */
+        div[data-testid="stForm"] {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 """, unsafe_allow_html=True)
@@ -591,80 +618,6 @@ with st.expander("🗑️ Delete Transaction"):
                 st.success(f"Transaction {transaction_id} deleted successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
-
-# Essential CSS styling
-st.markdown("""
-    <style>
-        .main-header {
-            text-align: center;
-            color: #2c3e50;
-            padding: 20px;
-            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .red-line {
-            border-top: 3px solid red;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        .image-align {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding-bottom: 20px;
-        }
-        /* Removed input and select box visibility overrides */
-        .stSelectbox div[role="option"]:hover {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-        /* Metric cards in analytics */
-        div[data-testid="metric-container"] {
-            background-color: #2d2d2d;
-            padding: 15px;
-            border-radius: 10px;
-            color: white !important;
-            width: 100%;
-        }
-        div[data-testid="metric-container"] label,
-        div[data-testid="metric-container"] div {
-            color: white !important;
-        }
-        /* Tab styling */
-        button[data-baseweb="tab"] {
-            font-size: 20px !important;
-            padding: 15px 30px !important;
-            font-weight: 600 !important;
-            border-radius: 10px !important;
-            color: #ffffff !important;
-            background-color: #007bff !important;
-            margin-right: 10px !important;
-        }
-        button[data-baseweb="tab"]:hover {
-            background-color: #0056b3 !important;
-            transition: background-color 0.3s ease;
-        }
-        button[data-baseweb="tab"][aria-selected="true"] {
-            background-color: #0056b3 !important;
-            border-bottom: 4px solid #ffcc00 !important;
-        }
-        /* Form Submit Button */
-        div.stButton>button {
-            background-color: #28a745;
-            color: white;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
-        }
-        div.stButton>button:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 
 
