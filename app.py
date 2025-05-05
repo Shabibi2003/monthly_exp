@@ -409,9 +409,13 @@ with tab3:
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
         with col4:
             description = st.text_input("Description")
-        
-        transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
-        category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
+
+        # Place Transaction Type and Category side by side
+        col5, col6 = st.columns(2)
+        with col5:
+            transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
+        with col6:
+            category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
 
         payment_method = st.radio(
             "Payment Method",
