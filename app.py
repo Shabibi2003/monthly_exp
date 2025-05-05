@@ -402,7 +402,39 @@ with tab3:
             description = st.text_input("Description")
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
             
-        payment_method = st.selectbox("Payment Method", ["Cash", "Online"])
+        # Modern, user-friendly payment method selection
+        st.markdown("""
+            <style>
+            .custom-radio label[data-baseweb="radio"] {
+                background: #f5f7fa;
+                border-radius: 8px;
+                padding: 10px 18px;
+                margin-right: 12px;
+                font-size: 1.1em;
+                font-weight: 500;
+                color: #222;
+                border: 2px solid #e0e0e0;
+                transition: border 0.2s, background 0.2s;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .custom-radio label[data-baseweb="radio"][aria-checked="true"] {
+                background: #007bff;
+                color: #fff;
+                border: 2px solid #007bff;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        payment_method = st.radio(
+            "Payment Method",
+            options=["💵 Cash", "💳 Online"],
+            horizontal=True,
+            key="payment_method_radio"
+        )
+        payment_method = "Cash" if payment_method == "💵 Cash" else "Online"
         submit = st.form_submit_button("Add Transaction")
 
         if submit:
