@@ -397,47 +397,22 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Add Transaction Tab
 with tab3:
     with st.form("transaction_form"):
-        col1, col2 = st.columns(2)
+        # Use more columns for compact inputs
+        col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
         with col1:
             date = st.date_input("Date")
+        with col2:
             local_timezone = pytz.timezone("Asia/Kolkata")
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
-            transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
-            category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
-        
-        
-
-        with col2:
-            description = st.text_input("Description")
+        with col3:
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-            
-        # Modern, user-friendly payment method selection
-        st.markdown("""
-            <style>
-            .custom-radio label[data-baseweb="radio"] {
-                background: #f5f7fa;
-                border-radius: 8px;
-                padding: 10px 18px;
-                margin-right: 12px;
-                font-size: 1.1em;
-                font-weight: 500;
-                color: #222;
-                border: 2px solid #e0e0e0;
-                transition: border 0.2s, background 0.2s;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .custom-radio label[data-baseweb="radio"][aria-checked="true"] {
-                background: #007bff;
-                color: #fff;
-                border: 2px solid #007bff;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+        with col4:
+            description = st.text_input("Description")
         
+        transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
+        category = st.selectbox("Category", ["Food", "Transport", "Utilities", "Salary", "Monthly Home Expenses", "Others"], disabled=False)
+
         payment_method = st.radio(
             "Payment Method",
             options=["💵 Cash", "💳 Online"],
