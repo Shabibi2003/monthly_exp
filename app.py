@@ -72,6 +72,13 @@ st.markdown("""
             color: black !important;
             background-color: white !important;
         }
+        /* ADD THESE LINES: */
+        input[type="number"],
+        input[type="date"],
+        input[type="time"] {
+            background-color: white !important;
+            color: black !important;
+        }
         .stSelectbox div[role="option"]:hover {
             background-color: #007bff !important;
             color: white !important;
