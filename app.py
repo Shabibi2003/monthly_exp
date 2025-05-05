@@ -418,7 +418,8 @@ with tab2:
         
         chart_df = transactions_df[
             (transactions_df["sub_category"] != "Monthly Savings") &
-            (transactions_df["category"] != "Salary")
+            (transactions_df["category"] != "Salary") &
+            (transactions_df["transaction_type"] == "Cash Out")
         ]
 
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
@@ -436,7 +437,7 @@ with tab2:
             chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
             time_data = chart_df.groupby('date_time')['amount'].sum()
             plt.plot(time_data.index, time_data.values)
-            plt.title("Time Series of Transactions")
+            plt.title("Time Series of Expenses")
             plt.savefig("time_series.png")
             st.image("time_series.png")
             
