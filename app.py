@@ -703,8 +703,8 @@ with st.expander("🗑️ Delete Transaction"):
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
-                #END
-                
+
+# updated UI                
 
 
 
