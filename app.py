@@ -379,24 +379,21 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Add Transaction Tab
 with tab3:
     with st.form("transaction_form"):
-        # First row: Date and Time
-        row1_col1, row1_col2 = st.columns(2)
-        with row1_col1:
+        # Use four columns for the first row to make each input compact
+        col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
+        with col1:
             date = st.date_input("Date")
-        with row1_col2:
+        with col2:
             local_timezone = pytz.timezone("Asia/Kolkata")
             current_time = datetime.now(local_timezone).strftime('%H:%M:%S')
             time = st.text_input("Time", current_time)
-
-        # Second row: Amount and Description
-        row2_col1, row2_col2 = st.columns(2)
-        with row2_col1:
+        with col3:
             amount = st.number_input("Amount", min_value=0.0, step=0.01)
-        with row2_col2:
+        with col4:
             description = st.text_input("Description")
 
-        # Place Transaction Type and Category side by side
-        col5, col6 = st.columns(2)
+        # Place Transaction Type and Category side by side in two columns
+        col5, col6 = st.columns([1, 1])
         with col5:
             transaction_type = st.selectbox("Transaction Type", ["Cash Out", "Cash In"])
         with col6:
@@ -451,5 +448,5 @@ with st.expander("🗑️ Delete Transaction"):
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
-# --- Simple Login Section ---
+# --- Simple Login Section
 
