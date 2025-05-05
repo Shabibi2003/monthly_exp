@@ -353,7 +353,11 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        chart_df = transactions_df[transactions_df["sub_category"] != "Monthly Savings"]
+        # Exclude both Monthly Savings and Salary from charts
+        chart_df = transactions_df[
+            (transactions_df["sub_category"] != "Monthly Savings") &
+            (transactions_df["category"] != "Salary")
+        ]
 
         chart_type = st.selectbox("Select Chart Type", ["Category Distribution", "Time Series", "Payment Methods"])
         
