@@ -487,12 +487,22 @@ with tab2:
             
         elif chart_type == "Category Comparison":
             fig = plt.figure(figsize=(10, 5))
-            category_monthly = chart_df.pivot_table(
+            # First ensure date_time is datetime
+            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
+            # Create month column before pivot
+            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
+            
+            # Create pivot table with explicit month column
+            category_monthly = pd.pivot_table(
+                data=chart_df,
+                values='amount',
                 index='month',
                 columns='category',
-                values='amount',
-                aggfunc='sum'
-            ).fillna(0)
+                aggfunc='sum',
+                fill_value=0
+            )
+            
+            # Plot the stacked bar chart
             category_monthly.plot(kind='bar', stacked=True)
             plt.title("Monthly Expenses by Category")
             plt.xlabel("Month")
