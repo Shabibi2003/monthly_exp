@@ -72,12 +72,15 @@ st.markdown("""
             color: black !important;
             background-color: white !important;
         }
-        /* ADD THESE LINES: */
         input[type="number"],
         input[type="date"],
         input[type="time"] {
             background-color: white !important;
             color: black !important;
+            max-width: 180px !important;   /* Make input boxes compact */
+            min-width: 80px !important;
+            width: 100% !important;
+            box-sizing: border-box;
         }
         .stSelectbox div[role="option"]:hover {
             background-color: #007bff !important;
