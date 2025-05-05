@@ -133,6 +133,8 @@ def init_connection():
         ssl_ca="ca-cert.pem"
     )
 
+
+
 def add_transaction(date_time, category, description, amount, transaction_type, sub_category, payment_method):
     conn = init_connection()
     cursor = conn.cursor()
