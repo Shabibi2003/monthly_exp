@@ -599,16 +599,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Limit width of input widgets in Add Transaction tab
-.custom-form-width .stTextInput,
-.custom-form-width .stNumberInput,
-.custom-form-width .stSelectbox,
-.custom-form-width .stDateInput,
-.custom-form-width .stRadio {
-    max-width: 350px !important;
-    min-width: 200px !important;
-    width: 100% !important;
-    margin-left: auto;
-    margin-right: auto;
-}
+
+
 
