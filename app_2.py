@@ -442,8 +442,6 @@ tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Tran
 with tab1:
     transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        # Add search box
-        search_term = st.text_input("🔍 Search transactions", "")
         
         # Enhanced filters
         col1, col2, col3 = st.columns(3)
