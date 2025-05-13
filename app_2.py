@@ -282,20 +282,19 @@ create_table()
 st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 
 # Add About button in the top right corner
-with st.container():
+if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"):
+    # Clear the current UI
+    st.empty()
+    
+    # Show only the About content
     st.markdown("""
         <style>
-        .about-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 999;
-        }
         .about-modal {
             background: linear-gradient(145deg, #2d2d2d, #353535);
             padding: 30px;
             border-radius: 15px;
-            margin: 20px 0;
+            margin: 20px auto;
+            max-width: 800px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
         }
@@ -345,60 +344,74 @@ with st.container():
             left: 8px;
             font-size: 18px;
         }
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 25px;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
         </style>
+        
+        <div class="about-modal">
+            <h3>📊 Welcome to Monthly Expenditure Tracker!</h3>
+            <p>This application helps you manage and track your monthly expenses efficiently. Here's how to use it:</p>
+            
+            <h4>🔑 Key Features:</h4>
+            <ul class="feature-list">
+                <li>Track both income and expenses</li>
+                <li>Categorize transactions</li>
+                <li>Monitor monthly savings</li>
+                <li>View detailed analytics</li>
+                <li>Export transaction data</li>
+            </ul>
+            
+            <h4>📝 How to Use:</h4>
+            <p><strong>1. Add Transactions (➕ Add Transaction tab)</strong></p>
+            <ul class="feature-list">
+                <li>Select transaction date and time</li>
+                <li>Choose transaction type (Cash In/Out)</li>
+                <li>Select category and sub-category</li>
+                <li>Enter amount and description</li>
+                <li>Choose payment method</li>
+            </ul>
+            
+            <p><strong>2. View Transactions (💰 Transactions tab)</strong></p>
+            <ul class="feature-list">
+                <li>Search transactions using the search box</li>
+                <li>Filter by category, type, or payment method</li>
+                <li>Select date range to view specific periods</li>
+                <li>Export transactions to CSV</li>
+            </ul>
+            
+            <p><strong>3. Analytics (📊 Analytics tab)</strong></p>
+            <ul class="feature-list">
+                <li>View total income and expenses</li>
+                <li>Track current balance</li>
+                <li>Monitor monthly savings</li>
+                <li>Analyze spending patterns</li>
+            </ul>
+            
+            <h4>💡 Tips:</h4>
+            <ul class="feature-list">
+                <li>Regularly update your transactions for accurate tracking</li>
+                <li>Use categories consistently for better analysis</li>
+                <li>Export data periodically for backup</li>
+                <li>Monitor your savings goals through the analytics</li>
+            </ul>
+        </div>
+        
+        <button class="back-button" onclick="window.location.reload()">Back to Dashboard</button>
     """, unsafe_allow_html=True)
-    
-    # Create About button
-    if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"):
-        st.markdown("""
-            <div class="about-modal">
-                <h3>📊 Welcome to Monthly Expenditure Tracker!</h3>
-                <p>This application helps you manage and track your monthly expenses efficiently. Here's how to use it:</p>
-                
-                <h4>🔑 Key Features:</h4>
-                <ul class="feature-list">
-                    <li>Track both income and expenses</li>
-                    <li>Categorize transactions</li>
-                    <li>Monitor monthly savings</li>
-                    <li>View detailed analytics</li>
-                    <li>Export transaction data</li>
-                </ul>
-                
-                <h4>📝 How to Use:</h4>
-                <p><strong>1. Add Transactions (➕ Add Transaction tab)</strong></p>
-                <ul class="feature-list">
-                    <li>Select transaction date and time</li>
-                    <li>Choose transaction type (Cash In/Out)</li>
-                    <li>Select category and sub-category</li>
-                    <li>Enter amount and description</li>
-                    <li>Choose payment method</li>
-                </ul>
-                
-                <p><strong>2. View Transactions (💰 Transactions tab)</strong></p>
-                <ul class="feature-list">
-                    <li>Search transactions using the search box</li>
-                    <li>Filter by category, type, or payment method</li>
-                    <li>Select date range to view specific periods</li>
-                    <li>Export transactions to CSV</li>
-                </ul>
-                
-                <p><strong>3. Analytics (📊 Analytics tab)</strong></p>
-                <ul class="feature-list">
-                    <li>View total income and expenses</li>
-                    <li>Track current balance</li>
-                    <li>Monitor monthly savings</li>
-                    <li>Analyze spending patterns</li>
-                </ul>
-                
-                <h4>💡 Tips:</h4>
-                <ul class="feature-list">
-                    <li>Regularly update your transactions for accurate tracking</li>
-                    <li>Use categories consistently for better analysis</li>
-                    <li>Export data periodically for backup</li>
-                    <li>Monitor your savings goals through the analytics</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
 
 # Add gap between header and analytics boxes
 st.markdown("<br>", unsafe_allow_html=True)
