@@ -100,7 +100,8 @@ def check_login():
         username = st.text_input("Username", placeholder="Enter your username")
         password = st.text_input("Password", type="password", placeholder="Enter your password")
         
-        if st.button("Login"):
+        # In the login section
+        if st.button("Login", key="login_button"):
             if username == USERNAME and password == PASSWORD:
                 st.session_state["logged_in"] = True
                 st.success("Login successful!")
@@ -458,7 +459,8 @@ with tab1:
     else:
         st.info("No transactions recorded yet.")
     
-    if st.button("Reload"):
+    # In the transactions tab
+    if st.button("Reload", key="reload_button"):
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -705,7 +707,7 @@ with st.expander("🗑️ Delete Transaction"):
                 st.error(f"Error: {str(e)}")
 
 
-# updated UI                
+# updated UI
 
 
 
