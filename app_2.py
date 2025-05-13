@@ -298,11 +298,6 @@ with st.container():
             margin: 20px 0;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .about-modal h3 {
             color: #3498db;
@@ -323,27 +318,32 @@ with st.container():
             color: #e0e0e0;
             margin-bottom: 15px;
             line-height: 1.6;
+            font-size: 16px;
+        }
+        .about-modal strong {
+            color: #f1c40f;
+            font-weight: 500;
         }
         .feature-list {
-            color: #e0e0e0;
-            margin: 10px 0 10px 25px;
             list-style-type: none;
+            padding-left: 0;
+            margin: 15px 0;
         }
         .feature-list li {
+            color: #e0e0e0;
             margin: 12px 0;
+            padding-left: 25px;
             position: relative;
             line-height: 1.5;
+            font-size: 15px;
         }
         .feature-list li:before {
             content: '•';
             color: #3498db;
             font-weight: bold;
             position: absolute;
-            left: -20px;
-        }
-        .about-modal strong {
-            color: #f1c40f;
-            font-weight: 500;
+            left: 8px;
+            font-size: 18px;
         }
         </style>
     """, unsafe_allow_html=True)
