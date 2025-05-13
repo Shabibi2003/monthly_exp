@@ -239,7 +239,7 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        INSERT INTO transactions (date_time, category, description, amount, transaction_type, sub_category, payment_method)
+        INSERT INTO expenses (date_time, category, description, amount, transaction_type, sub_category, payment_method)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (date_time, category, description, amount, transaction_type, sub_category, payment_method))
     conn.commit()
@@ -248,13 +248,13 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
 def remove_transaction(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
+    cursor.execute("DELETE FROM expenses WHERE id = %s", (transaction_id,))
     conn.commit()
     conn.close()
 
 def fetch_transactions():
     conn = init_connection()
-    transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
+    transactions_df = pd.read_sql_query("SELECT * FROM expenses", conn)
     conn.close()
     return transactions_df
 
@@ -262,7 +262,7 @@ def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        CREATE TABLE IF NOT EXISTS transactions (
+        CREATE TABLE IF NOT EXISTS expenses (
             id INT AUTO_INCREMENT PRIMARY KEY,
             date_time DATETIME,
             category VARCHAR(100),
