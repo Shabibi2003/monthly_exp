@@ -425,7 +425,7 @@ st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 st.markdown("""
     <style>
         .tab-gap {
-            margin-bottom: 70px;
+            margin-bottom: 40px;
         }
     </style>
     <div class="tab-gap"></div>
@@ -796,8 +796,8 @@ with st.expander("🗑️ Delete Transaction"):
                 st.error(f"Error: {str(e)}")
 
 
-# updated UI
 
+# adding comment to push the code
 
 
 
