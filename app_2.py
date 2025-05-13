@@ -291,35 +291,59 @@ with st.container():
             right: 20px;
             z-index: 999;
         }
-        .stButton.about-button button {
-            background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: none;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
         .about-modal {
-            background: #2d2d2d;
-            padding: 25px;
+            background: linear-gradient(145deg, #2d2d2d, #353535);
+            padding: 30px;
             border-radius: 15px;
             margin: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: 1px solid #444;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .about-modal h3 {
             color: #3498db;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .about-modal h4 {
+            color: #2ecc71;
+            margin: 25px 0 15px 0;
+            font-size: 20px;
+            font-weight: 500;
+            border-bottom: 2px solid rgba(46, 204, 113, 0.3);
+            padding-bottom: 8px;
         }
         .about-modal p {
             color: #e0e0e0;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
         .feature-list {
             color: #e0e0e0;
-            margin-left: 20px;
+            margin: 10px 0 10px 25px;
+            list-style-type: none;
+        }
+        .feature-list li {
+            margin: 12px 0;
+            position: relative;
+            line-height: 1.5;
+        }
+        .feature-list li:before {
+            content: '•';
+            color: #3498db;
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
+        }
+        .about-modal strong {
+            color: #f1c40f;
+            font-weight: 500;
         }
         </style>
     """, unsafe_allow_html=True)
