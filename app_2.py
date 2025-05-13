@@ -342,7 +342,8 @@ if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"
     * Export data periodically for backup
     * Monitor your savings goals through the analytics
     """)
-    
+    st.header("Latest Updates regarding this Application will be display here")
+    st.markdown("No Updates yet")
     # Add back button
     if st.button("Back to Dashboard", key="back_button"):
         st.rerun()
