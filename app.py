@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 from dotenv import load_dotenv
-import os
-
 from dotenv import load_dotenv
 import os
 
@@ -459,6 +457,9 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
+    
+    if st.button("Reload"):
+        st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
 
