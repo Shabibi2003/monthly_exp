@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 from dotenv import load_dotenv
-import os
-
 from dotenv import load_dotenv
 import os
 
@@ -102,7 +100,8 @@ def check_login():
         username = st.text_input("Username", placeholder="Enter your username")
         password = st.text_input("Password", type="password", placeholder="Enter your password")
         
-        if st.button("Login"):
+        # In the login section
+        if st.button("Login", key="login_button"):
             if username == USERNAME and password == PASSWORD:
                 st.session_state["logged_in"] = True
                 st.success("Login successful!")
@@ -240,7 +239,7 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        INSERT INTO expenses (date_time, category, description, amount, transaction_type, sub_category, payment_method)
+        INSERT INTO transactions (date_time, category, description, amount, transaction_type, sub_category, payment_method)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (date_time, category, description, amount, transaction_type, sub_category, payment_method))
     conn.commit()
@@ -249,13 +248,13 @@ def add_transaction(date_time, category, description, amount, transaction_type, 
 def remove_transaction(transaction_id):
     conn = init_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses WHERE id = %s", (transaction_id,))
+    cursor.execute("DELETE FROM transactions WHERE id = %s", (transaction_id,))
     conn.commit()
     conn.close()
 
 def fetch_transactions():
     conn = init_connection()
-    transactions_df = pd.read_sql_query("SELECT * FROM expenses", conn)
+    transactions_df = pd.read_sql_query("SELECT * FROM transactions", conn)
     conn.close()
     return transactions_df
 
@@ -263,7 +262,7 @@ def create_table():
     conn = init_connection()
     cursor = conn.cursor()
     cursor.execute(""" 
-        CREATE TABLE IF NOT EXISTS expenses (
+        CREATE TABLE IF NOT EXISTS transactions (
             id INT AUTO_INCREMENT PRIMARY KEY,
             date_time DATETIME,
             category VARCHAR(100),
@@ -459,6 +458,10 @@ with tab1:
         st.dataframe(filtered_df, use_container_width=True)
     else:
         st.info("No transactions recorded yet.")
+    
+    # In the transactions tab
+    if st.button("Reload", key="reload_button"):
+        st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -704,7 +707,7 @@ with st.expander("🗑️ Delete Transaction"):
                 st.error(f"Error: {str(e)}")
 
 
-# updated UI                
+# updated UI
 
 
 
