@@ -776,17 +776,6 @@ with tab2:
             st.image(buf, width=600)
             plt.close()
 
-        # Display detailed statistics
-        st.subheader("Detailed Statistics")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric("Total Transactions", len(filtered_df))
-            st.metric("Average Transaction Amount", f"₹{filtered_df['amount'].mean():.2f}")
-        
-        with col2:
-            st.metric("Highest Transaction", f"₹{filtered_df['amount'].max():.2f}")
-            st.metric("Lowest Transaction", f"₹{filtered_df['amount'].min():.2f}")
 
     else:
         st.info("No transaction data available for analysis.")
