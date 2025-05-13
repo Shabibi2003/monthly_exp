@@ -347,6 +347,14 @@ if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"
     # Add back button
     if st.button("Back to Dashboard", key="back_button"):
         st.rerun()
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+
+
+
 
 # Add gap between header and analytics boxes
 st.markdown("<br>", unsafe_allow_html=True)
