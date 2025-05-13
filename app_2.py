@@ -442,23 +442,92 @@ tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Tran
 with tab1:
     transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        col1, col2 = st.columns(2)
+        # Add search box
+        search_term = st.text_input("🔍 Search transactions", "")
+        
+        # Enhanced filters
+        col1, col2, col3 = st.columns(3)
         with col1:
             category_filter = st.multiselect("Filter by Category", transactions_df['category'].unique())
         with col2:
             type_filter = st.multiselect("Filter by Type", transactions_df['transaction_type'].unique())
-
+        with col3:
+            payment_filter = st.multiselect("Filter by Payment Method", transactions_df['payment_method'].unique())
+        
+        # Date range filter
+        date_range = st.date_input(
+            "Select Date Range",
+            value=(transactions_df['date_time'].min().date(), transactions_df['date_time'].max().date()),
+            key="transaction_date_range"
+        )
+        
         st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
-        filtered_df = transactions_df
+        
+        # Apply filters
+        filtered_df = transactions_df.copy()
+        
+        # Apply search
+        if search_term:
+            filtered_df = filtered_df[
+                filtered_df['description'].str.contains(search_term, case=False, na=False) |
+                filtered_df['category'].str.contains(search_term, case=False, na=False) |
+                filtered_df['sub_category'].str.contains(search_term, case=False, na=False)
+            ]
+        
+        # Apply category filter
         if category_filter:
             filtered_df = filtered_df[filtered_df['category'].isin(category_filter)]
+        
+        # Apply type filter
         if type_filter:
             filtered_df = filtered_df[filtered_df['transaction_type'].isin(type_filter)]
-
-        st.dataframe(filtered_df, use_container_width=True)
+            
+        # Apply payment method filter
+        if payment_filter:
+            filtered_df = filtered_df[filtered_df['payment_method'].isin(payment_filter)]
+            
+        # Apply date filter
+        mask = (filtered_df['date_time'].dt.date >= date_range[0]) & (filtered_df['date_time'].dt.date <= date_range[1])
+        filtered_df = filtered_df[mask]
+        
+        # Show results count
+        st.markdown(f"<p style='color: #666;'>Showing {len(filtered_df)} transactions</p>", unsafe_allow_html=True)
+        
+        # Enhanced transaction table
+        if not filtered_df.empty:
+            # Format the dataframe
+            display_df = filtered_df.copy()
+            display_df['date_time'] = display_df['date_time'].dt.strftime('%Y-%m-%d %H:%M')
+            display_df['amount'] = display_df['amount'].apply(lambda x: f"₹{x:,.2f}")
+            
+            st.dataframe(
+                display_df,
+                use_container_width=True,
+                column_config={
+                    "date_time": "Date & Time",
+                    "category": "Category",
+                    "description": "Description",
+                    "amount": "Amount",
+                    "transaction_type": "Type",
+                    "sub_category": "Sub-Category",
+                    "payment_method": "Payment Method"
+                }
+            )
+        else:
+            st.info("No transactions match your filters.")
+        
+        # Export functionality
+        if st.button("Export to CSV"):
+            csv = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="Download CSV",
+                data=csv,
+                file_name="transactions.csv",
+                mime="text/csv"
+            )
     else:
         st.info("No transactions recorded yet.")
-    
+
     # In the transactions tab
     if st.button("Reload", key="reload_button"):
         st.rerun()
@@ -536,95 +605,55 @@ with tab2:
             (transactions_df["transaction_type"] == "Cash Out")
         ]
 
-        chart_type = st.selectbox("Select Chart Type", [
-            "Category Distribution", 
-            "Time Series", 
-            "Payment Methods",
-            "Daily Expenses",
-            "Monthly Trend",
-            "Category Comparison"
-        ])
+        # Enhanced chart selection
+        col1, col2 = st.columns(2)
+        with col1:
+            chart_type = st.selectbox("Select Chart Type", [
+                "Category Distribution", 
+                "Time Series", 
+                "Payment Methods",
+                "Daily Expenses",
+                "Monthly Trend",
+                "Category Comparison",
+                "Budget vs Actual",  # New chart type
+                "Savings Progress",  # New chart type
+                "Expense Forecast"   # New chart type
+            ])
         
-        if chart_type == "Category Distribution":
-            fig = plt.figure(figsize=(6, 4))
-            category_data = chart_df.groupby('category')['amount'].sum()
-            plt.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
-            plt.title("Expenses by Category")
-            plt.savefig("category_distribution.png")
-            st.image("category_distribution.png")
-            
-        elif chart_type == "Time Series":
-            fig = plt.figure(figsize=(6, 4))
-            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
-            time_data = chart_df.groupby('date_time')['amount'].sum()
-            plt.plot(time_data.index, time_data.values)
-            plt.title("Time Series of Expenses")
-            plt.xticks(rotation=45)
-            plt.tight_layout()
-            plt.savefig("time_series.png")
-            st.image("time_series.png")
-            
-        elif chart_type == "Payment Methods":
-            fig = plt.figure(figsize=(6, 4))
-            payment_data = chart_df.groupby('payment_method')['amount'].sum()
-            plt.bar(payment_data.index, payment_data.values)
-            plt.title("Expenses by Payment Method")
-            plt.savefig("payment_methods.png")
-            st.image("payment_methods.png")
-            
-        elif chart_type == "Daily Expenses":
-            fig = plt.figure(figsize=(10, 5))
-            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
-            chart_df['day_of_week'] = chart_df['date_time'].dt.day_name()
-            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            daily_expenses = chart_df.groupby('day_of_week')['amount'].mean().reindex(day_order)
-            plt.bar(daily_expenses.index, daily_expenses.values)
-            plt.title("Average Daily Expenses")
-            plt.xticks(rotation=45)
-            plt.ylabel("Amount (₹)")
-            plt.tight_layout()
-            plt.savefig("daily_expenses.png")
-            st.image("daily_expenses.png")
-            
-        elif chart_type == "Monthly Trend":
-            fig = plt.figure(figsize=(10, 5))
-            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
-            monthly_expenses = chart_df.groupby('month')['amount'].sum()
-            plt.plot(monthly_expenses.index, monthly_expenses.values, marker='o')
-            plt.title("Monthly Expense Trend")
-            plt.xticks(rotation=45)
-            plt.ylabel("Total Amount (₹)")
-            plt.grid(True, linestyle='--', alpha=0.7)
-            plt.tight_layout()
-            plt.savefig("monthly_trend.png")
-            st.image("monthly_trend.png")
-            
-        elif chart_type == "Category Comparison":
-            fig = plt.figure(figsize=(10, 5))
-            # First ensure date_time is datetime
-            chart_df['date_time'] = pd.to_datetime(chart_df['date_time'])
-            # Create month column before pivot
-            chart_df['month'] = chart_df['date_time'].dt.strftime('%Y-%m')
-            
-            # Create pivot table with explicit month column
-            category_monthly = pd.pivot_table(
-                data=chart_df,
-                values='amount',
-                index='month',
-                columns='category',
-                aggfunc='sum',
-                fill_value=0
+        with col2:
+            # Add time range filter
+            date_range = st.date_input(
+                "Select Date Range",
+                value=(transactions_df['date_time'].min().date(), transactions_df['date_time'].max().date()),
+                key="date_range"
             )
-            
-            # Plot the stacked bar chart
-            category_monthly.plot(kind='bar', stacked=True)
-            plt.title("Monthly Expenses by Category")
-            plt.xlabel("Month")
-            plt.ylabel("Amount (₹)")
-            plt.legend(title="Categories", bbox_to_anchor=(1.05, 1), loc='upper left')
-            plt.tight_layout()
-            plt.savefig("category_comparison.png")
-            st.image("category_comparison.png")
+        
+        # Filter data based on date range
+        mask = (transactions_df['date_time'].dt.date >= date_range[0]) & (transactions_df['date_time'].dt.date <= date_range[1])
+        filtered_df = transactions_df[mask]
+        
+        # Add summary metrics for selected period
+        period_expenses = filtered_df[filtered_df['transaction_type'] == 'Cash Out']['amount'].sum()
+        period_income = filtered_df[
+            (filtered_df['transaction_type'] == 'Cash In') & 
+            (filtered_df['sub_category'] != 'Monthly Savings')
+        ]['amount'].sum()
+        
+        st.markdown(f"""
+        <div class="period-summary" style="margin: 20px 0; padding: 15px; background: #2d2d2d; border-radius: 10px;">
+            <h3 style="color: white; margin-bottom: 10px;">Selected Period Summary</h3>
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1; text-align: center;">
+                    <div style="color: #4CAF50; font-size: 1.2em;">Income</div>
+                    <div style="color: white; font-size: 1.4em;">₹{period_income:,.2f}</div>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div style="color: #f44336; font-size: 1.2em;">Expenses</div>
+                    <div style="color: white; font-size: 1.4em;">₹{period_expenses:,.2f}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
 
