@@ -281,6 +281,9 @@ create_table()
 # Main UI (single column, no photo)
 st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 
+# Add gap between header and About button
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Add About button in the top right corner
 if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"):
     # Clear the current UI
