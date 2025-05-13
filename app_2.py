@@ -684,6 +684,8 @@ with tab2:
                 delta=f"₹{period_savings:,.2f}" if period_savings > 0 else None
             )
 
+        st.markdown("<br>", unsafe_allow_html=True)
+
         # Additional insights
         st.markdown("### 📈 Key Insights")
         insight_col1, insight_col2 = st.columns(2)
