@@ -639,24 +639,31 @@ with tab2:
         else:
             filtered_df = transactions_df
 
-        # Create charts based on selection
+        # Create charts based on selection with reduced figure size
         if chart_type == "Category Distribution":
             # Prepare data for category distribution
             category_data = filtered_df.groupby('category')['amount'].sum()
             
-            # Create pie chart
-            fig, ax = plt.subplots(figsize=(10, 6))
+            # Create pie chart with reduced size
+            fig, ax = plt.subplots(figsize=(8, 4))
             ax.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
             ax.set_title('Expense Distribution by Category')
-            st.pyplot(fig)
+            
+            # Save figure to buffer
+            buf = BytesIO()
+            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+            buf.seek(0)
+            
+            # Display image with custom width
+            st.image(buf, width=600)
             plt.close()
 
         elif chart_type == "Monthly Trend":
             # Prepare monthly trend data
             monthly_data = filtered_df.groupby([filtered_df['date_time'].dt.to_period('M'), 'transaction_type'])['amount'].sum().unstack()
             
-            # Create line chart
-            fig, ax = plt.subplots(figsize=(12, 6))
+            # Create line chart with reduced size
+            fig, ax = plt.subplots(figsize=(8, 4))
             if 'Cash In' in monthly_data.columns:
                 ax.plot(range(len(monthly_data.index)), monthly_data['Cash In'], label='Income', marker='o')
             if 'Cash Out' in monthly_data.columns:
@@ -667,20 +674,34 @@ with tab2:
             ax.set_title('Monthly Income vs Expenses Trend')
             ax.legend()
             ax.grid(True)
-            st.pyplot(fig)
+            
+            # Save figure to buffer
+            buf = BytesIO()
+            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+            buf.seek(0)
+            
+            # Display image with custom width
+            st.image(buf, width=600)
             plt.close()
 
         elif chart_type == "Transaction Type Distribution":
             # Prepare transaction type distribution
             type_data = filtered_df.groupby('transaction_type')['amount'].sum()
             
-            # Create bar chart
-            fig, ax = plt.subplots(figsize=(10, 6))
+            # Create bar chart with reduced size
+            fig, ax = plt.subplots(figsize=(8, 4))
             type_data.plot(kind='bar', ax=ax)
             ax.set_title('Distribution by Transaction Type')
             ax.set_ylabel('Amount')
             plt.xticks(rotation=45)
-            st.pyplot(fig)
+            
+            # Save figure to buffer
+            buf = BytesIO()
+            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+            buf.seek(0)
+            
+            # Display image with custom width
+            st.image(buf, width=600)
             plt.close()
 
         # Display detailed statistics
