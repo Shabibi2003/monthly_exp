@@ -598,124 +598,102 @@ st.markdown("<br>", unsafe_allow_html=True)
 with tab2:
     transactions_df = fetch_transactions()
     if not transactions_df.empty:
-        total_in = transactions_df[
-            (transactions_df["transaction_type"] == "Cash In") &
-            (transactions_df["sub_category"] != "Monthly Savings")
-        ]["amount"].sum()
-        total_out = transactions_df[transactions_df["transaction_type"] == "Cash Out"]["amount"].sum()
-        balance = total_in - total_out
-        monthly_savings = transactions_df[
-            (transactions_df["transaction_type"] == "Cash In") &
-            (transactions_df["sub_category"] == "Monthly Savings")
-        ]["amount"].sum()
-
-        st.markdown(f"""
-        <style>
-        .custom-metric-row {{
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }}
-        .custom-metric-box {{
-            flex: 1;
-            background: #232323;
-            border-radius: 8px;
-            padding: 12px 5px 8px 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-            border: 1px solid #444;
-            color: white;
-            text-align: center;
-            min-width: 0;
-        }}
-        .custom-metric-label {{
-            color: #bbb;
-            font-size: 0.95em;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }}
-        .custom-metric-value {{
-            color: #fff;
-            font-size: 1.2em;
-            font-weight: bold;
-        }}
-        </style>
-        <div class="custom-metric-row">
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Total Income</div>
-                <div class="custom-metric-value">₹{total_in:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Total Expenses</div>
-                <div class="custom-metric-value">₹{total_out:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Balance</div>
-                <div class="custom-metric-value">₹{balance:,.2f}</div>
-            </div>
-            <div class="custom-metric-box">
-                <div class="custom-metric-label">Monthly Savings</div>
-                <div class="custom-metric-value">₹{monthly_savings:,.2f}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Add date conversion
+        transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
         
-        chart_df = transactions_df[
-            (transactions_df["sub_category"] != "Monthly Savings") &
-            (transactions_df["category"] != "Salary") &
-            (transactions_df["transaction_type"] == "Cash Out")
-        ]
+        # Sidebar filters
+        st.sidebar.header("Analytics Filters")
+        
+        # Time period filter
+        time_period = st.sidebar.selectbox(
+            "Select Time Period",
+            ["All Time", "This Month", "Last Month", "Last 3 Months", "Last 6 Months", "This Year"]
+        )
+        
+        # Filter data based on time period
+        current_date = pd.Timestamp.now()
+        if time_period == "This Month":
+            filtered_df = transactions_df[transactions_df['date_time'].dt.to_period('M') == current_date.to_period('M')]
+        elif time_period == "Last Month":
+            last_month = current_date - pd.DateOffset(months=1)
+            filtered_df = transactions_df[transactions_df['date_time'].dt.to_period('M') == last_month.to_period('M')]
+        elif time_period == "Last 3 Months":
+            three_months_ago = current_date - pd.DateOffset(months=3)
+            filtered_df = transactions_df[transactions_df['date_time'] >= three_months_ago]
+        elif time_period == "Last 6 Months":
+            six_months_ago = current_date - pd.DateOffset(months=6)
+            filtered_df = transactions_df[transactions_df['date_time'] >= six_months_ago]
+        elif time_period == "This Year":
+            filtered_df = transactions_df[transactions_df['date_time'].dt.year == current_date.year]
+        else:
+            filtered_df = transactions_df
 
-        # Enhanced chart selection
+        # Chart type selector
+        chart_type = st.sidebar.selectbox(
+            "Select Chart Type",
+            ["Category Distribution", "Monthly Trend", "Transaction Type Distribution"]
+        )
+
+        # Create charts based on selection
+        if chart_type == "Category Distribution":
+            # Prepare data for category distribution
+            category_data = filtered_df.groupby('category')['amount'].sum()
+            
+            # Create pie chart
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.pie(category_data, labels=category_data.index, autopct='%1.1f%%')
+            ax.set_title('Expense Distribution by Category')
+            st.pyplot(fig)
+            plt.close()
+
+        elif chart_type == "Monthly Trend":
+            # Prepare monthly trend data
+            monthly_data = filtered_df.groupby([filtered_df['date_time'].dt.to_period('M'), 'transaction_type'])['amount'].sum().unstack()
+            
+            # Create line chart
+            fig, ax = plt.subplots(figsize=(12, 6))
+            if 'Cash In' in monthly_data.columns:
+                ax.plot(range(len(monthly_data.index)), monthly_data['Cash In'], label='Income', marker='o')
+            if 'Cash Out' in monthly_data.columns:
+                ax.plot(range(len(monthly_data.index)), monthly_data['Cash Out'], label='Expenses', marker='o')
+            
+            ax.set_xticks(range(len(monthly_data.index)))
+            ax.set_xticklabels([str(period) for period in monthly_data.index], rotation=45)
+            ax.set_title('Monthly Income vs Expenses Trend')
+            ax.legend()
+            ax.grid(True)
+            st.pyplot(fig)
+            plt.close()
+
+        elif chart_type == "Transaction Type Distribution":
+            # Prepare transaction type distribution
+            type_data = filtered_df.groupby('transaction_type')['amount'].sum()
+            
+            # Create bar chart
+            fig, ax = plt.subplots(figsize=(10, 6))
+            type_data.plot(kind='bar', ax=ax)
+            ax.set_title('Distribution by Transaction Type')
+            ax.set_ylabel('Amount')
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
+            plt.close()
+
+        # Display detailed statistics
+        st.subheader("Detailed Statistics")
         col1, col2 = st.columns(2)
+        
         with col1:
-            chart_type = st.selectbox("Select Chart Type", [
-                "Category Distribution", 
-                "Time Series", 
-                "Payment Methods",
-                "Daily Expenses",
-                "Monthly Trend",
-                "Category Comparison",
-                "Budget vs Actual",  # New chart type
-                "Savings Progress",  # New chart type
-                "Expense Forecast"   # New chart type
-            ])
+            st.metric("Total Transactions", len(filtered_df))
+            st.metric("Average Transaction Amount", f"₹{filtered_df['amount'].mean():.2f}")
         
         with col2:
-            # Add time range filter
-            date_range = st.date_input(
-                "Select Date Range",
-                value=(transactions_df['date_time'].min().date(), transactions_df['date_time'].max().date()),
-                key="date_range"
-            )
-        
-        # Filter data based on date range
-        mask = (transactions_df['date_time'].dt.date >= date_range[0]) & (transactions_df['date_time'].dt.date <= date_range[1])
-        filtered_df = transactions_df[mask]
-        
-        # Add summary metrics for selected period
-        period_expenses = filtered_df[filtered_df['transaction_type'] == 'Cash Out']['amount'].sum()
-        period_income = filtered_df[
-            (filtered_df['transaction_type'] == 'Cash In') & 
-            (filtered_df['sub_category'] != 'Monthly Savings')
-        ]['amount'].sum()
-        
-        st.markdown(f"""
-        <div class="period-summary" style="margin: 20px 0; padding: 15px; background: #2d2d2d; border-radius: 10px;">
-            <h3 style="color: white; margin-bottom: 10px;">Selected Period Summary</h3>
-            <div style="display: flex; gap: 20px;">
-                <div style="flex: 1; text-align: center;">
-                    <div style="color: #4CAF50; font-size: 1.2em;">Income</div>
-                    <div style="color: white; font-size: 1.4em;">₹{period_income:,.2f}</div>
-                </div>
-                <div style="flex: 1; text-align: center;">
-                    <div style="color: #f44336; font-size: 1.2em;">Expenses</div>
-                    <div style="color: white; font-size: 1.4em;">₹{period_expenses:,.2f}</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.metric("Highest Transaction", f"₹{filtered_df['amount'].max():.2f}")
+            st.metric("Lowest Transaction", f"₹{filtered_df['amount'].min():.2f}")
+
+    else:
+        st.info("No transaction data available for analysis.")
+
+st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -797,7 +775,7 @@ with st.expander("🗑️ Delete Transaction"):
 
 
 
-# adding comment to push the code
+# adding comment to push the code to github
 
 
 
