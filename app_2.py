@@ -619,9 +619,6 @@ with tab2:
                 ["Category Distribution", "Monthly Trend", "Transaction Type Distribution"]
             )
         
-        # Add a separator
-        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
-        
         # Filter data based on time period
         current_date = pd.Timestamp.now()
         if time_period == "This Month":
@@ -639,6 +636,80 @@ with tab2:
             filtered_df = transactions_df[transactions_df['date_time'].dt.year == current_date.year]
         else:
             filtered_df = transactions_df
+
+        # Calculate metrics for the filtered period
+        period_total_in = filtered_df[
+            (filtered_df["transaction_type"] == "Cash In") &
+            (filtered_df["sub_category"] != "Monthly Savings")
+        ]["amount"].sum()
+        
+        period_total_out = filtered_df[filtered_df["transaction_type"] == "Cash Out"]["amount"].sum()
+        period_balance = period_total_in - period_total_out
+        period_savings = filtered_df[
+            (filtered_df["transaction_type"] == "Cash In") &
+            (filtered_df["sub_category"] == "Monthly Savings")
+        ]["amount"].sum()
+
+        # Display detailed statistics in a grid
+        st.markdown("### 📊 Period Statistics")
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric(
+                "Total Income",
+                f"₹{period_total_in:,.2f}",
+                delta=f"₹{period_total_in - period_total_out:,.2f}" if period_total_in > 0 else None
+            )
+        
+        with col2:
+            st.metric(
+                "Total Expenses",
+                f"₹{period_total_out:,.2f}",
+                delta=f"-₹{period_total_out:,.2f}" if period_total_out > 0 else None,
+                delta_color="inverse"
+            )
+        
+        with col3:
+            st.metric(
+                "Balance",
+                f"₹{period_balance:,.2f}",
+                delta=f"₹{period_balance:,.2f}" if period_balance > 0 else f"-₹{abs(period_balance):,.2f}",
+                delta_color="normal" if period_balance > 0 else "inverse"
+            )
+        
+        with col4:
+            st.metric(
+                "Monthly Savings",
+                f"₹{period_savings:,.2f}",
+                delta=f"₹{period_savings:,.2f}" if period_savings > 0 else None
+            )
+
+        # Additional insights
+        st.markdown("### 📈 Key Insights")
+        insight_col1, insight_col2 = st.columns(2)
+        
+        with insight_col1:
+            # Calculate category-wise spending
+            category_spending = filtered_df[filtered_df["transaction_type"] == "Cash Out"].groupby("category")["amount"].sum()
+            if not category_spending.empty:
+                top_expense_category = category_spending.idxmax()
+                st.metric(
+                    "Top Expense Category",
+                    top_expense_category,
+                    f"₹{category_spending[top_expense_category]:,.2f}"
+                )
+        
+        with insight_col2:
+            # Calculate daily average spending
+            days_in_period = (filtered_df['date_time'].max() - filtered_df['date_time'].min()).days + 1
+            daily_avg = period_total_out / days_in_period if days_in_period > 0 else 0
+            st.metric(
+                "Daily Average Expense",
+                f"₹{daily_avg:,.2f}",
+                f"{days_in_period} days"
+            )
+
+        st.markdown("<hr>", unsafe_allow_html=True)
 
         # Create charts based on selection with reduced figure size
         if chart_type == "Category Distribution":
