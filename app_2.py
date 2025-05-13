@@ -464,13 +464,6 @@ with tab1:
         # Apply filters
         filtered_df = transactions_df.copy()
         
-        # Apply search
-        if search_term:
-            filtered_df = filtered_df[
-                filtered_df['description'].str.contains(search_term, case=False, na=False) |
-                filtered_df['category'].str.contains(search_term, case=False, na=False) |
-                filtered_df['sub_category'].str.contains(search_term, case=False, na=False)
-            ]
         
         # Apply category filter
         if category_filter:
