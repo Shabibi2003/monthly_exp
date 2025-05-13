@@ -281,6 +281,101 @@ create_table()
 # Main UI (single column, no photo)
 st.markdown('<h1 class="main-header" style="margin-bottom:0;">Monthly Expenditure Tracker</h1>', unsafe_allow_html=True)
 
+# Add About button in the top right corner
+with st.container():
+    st.markdown("""
+        <style>
+        .about-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        .stButton.about-button button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .about-modal {
+            background: #2d2d2d;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #444;
+        }
+        .about-modal h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        .about-modal p {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+        .feature-list {
+            color: #e0e0e0;
+            margin-left: 20px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # Create About button
+    if st.button("ℹ️ About", key="about_button", help="Learn how to use the app"):
+        st.markdown("""
+            <div class="about-modal">
+                <h3>📊 Welcome to Monthly Expenditure Tracker!</h3>
+                <p>This application helps you manage and track your monthly expenses efficiently. Here's how to use it:</p>
+                
+                <h4>🔑 Key Features:</h4>
+                <ul class="feature-list">
+                    <li>Track both income and expenses</li>
+                    <li>Categorize transactions</li>
+                    <li>Monitor monthly savings</li>
+                    <li>View detailed analytics</li>
+                    <li>Export transaction data</li>
+                </ul>
+                
+                <h4>📝 How to Use:</h4>
+                <p><strong>1. Add Transactions (➕ Add Transaction tab)</strong></p>
+                <ul class="feature-list">
+                    <li>Select transaction date and time</li>
+                    <li>Choose transaction type (Cash In/Out)</li>
+                    <li>Select category and sub-category</li>
+                    <li>Enter amount and description</li>
+                    <li>Choose payment method</li>
+                </ul>
+                
+                <p><strong>2. View Transactions (💰 Transactions tab)</strong></p>
+                <ul class="feature-list">
+                    <li>Search transactions using the search box</li>
+                    <li>Filter by category, type, or payment method</li>
+                    <li>Select date range to view specific periods</li>
+                    <li>Export transactions to CSV</li>
+                </ul>
+                
+                <p><strong>3. Analytics (📊 Analytics tab)</strong></p>
+                <ul class="feature-list">
+                    <li>View total income and expenses</li>
+                    <li>Track current balance</li>
+                    <li>Monitor monthly savings</li>
+                    <li>Analyze spending patterns</li>
+                </ul>
+                
+                <h4>💡 Tips:</h4>
+                <ul class="feature-list">
+                    <li>Regularly update your transactions for accurate tracking</li>
+                    <li>Use categories consistently for better analysis</li>
+                    <li>Export data periodically for backup</li>
+                    <li>Monitor your savings goals through the analytics</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
 # Add gap between header and analytics boxes
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
