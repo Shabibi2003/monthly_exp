@@ -601,14 +601,25 @@ with tab2:
         # Add date conversion
         transactions_df['date_time'] = pd.to_datetime(transactions_df['date_time'])
         
-        # Sidebar filters
-        st.sidebar.header("Analytics Filters")
+        # Create two columns for filters
+        col1, col2 = st.columns(2)
         
-        # Time period filter
-        time_period = st.sidebar.selectbox(
-            "Select Time Period",
-            ["All Time", "This Month", "Last Month", "Last 3 Months", "Last 6 Months", "This Year"]
-        )
+        # Time period filter in first column
+        with col1:
+            time_period = st.selectbox(
+                "Select Time Period",
+                ["All Time", "This Month", "Last Month", "Last 3 Months", "Last 6 Months", "This Year"]
+            )
+        
+        # Chart type selector in second column
+        with col2:
+            chart_type = st.selectbox(
+                "Select Chart Type",
+                ["Category Distribution", "Monthly Trend", "Transaction Type Distribution"]
+            )
+        
+        # Add a separator
+        st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
         
         # Filter data based on time period
         current_date = pd.Timestamp.now()
@@ -627,12 +638,6 @@ with tab2:
             filtered_df = transactions_df[transactions_df['date_time'].dt.year == current_date.year]
         else:
             filtered_df = transactions_df
-
-        # Chart type selector
-        chart_type = st.sidebar.selectbox(
-            "Select Chart Type",
-            ["Category Distribution", "Monthly Trend", "Transaction Type Distribution"]
-        )
 
         # Create charts based on selection
         if chart_type == "Category Distribution":
