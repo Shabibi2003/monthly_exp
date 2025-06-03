@@ -506,7 +506,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Add this line before using tab1, tab2, tab3
-tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
+tab1, tab2, tab3 = st.tabs(["➕ Add Transaction", "📊 Analytics", "💰 Transactions"])
 
 # Transactions Tab
 with tab3:
