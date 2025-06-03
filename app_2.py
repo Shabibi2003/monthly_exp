@@ -94,7 +94,7 @@ def check_login():
             </style>
             <div class="login-container">
                 <div class="login-icon">🔐</div>
-                <h1 class="login-header">Welcome Back Amjad </h1>
+                <h1 class="login-header">Welcome Back Asjad </h1>
             </div>
         """, unsafe_allow_html=True)
         
