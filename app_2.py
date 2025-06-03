@@ -509,7 +509,7 @@ st.markdown("""
 tab1, tab2, tab3 = st.tabs(["💰 Transactions", "📊 Analytics", "➕ Add Transaction"])
 
 # Transactions Tab
-with tab1:
+with tab3:
     transactions_df = fetch_transactions()
     if not transactions_df.empty:
         
@@ -787,7 +787,7 @@ st.markdown('<div class="red-line"></div>', unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Add Transaction Tab
-with tab3:
+with tab1:
     st.markdown('<div class="custom-form-width">', unsafe_allow_html=True)
     with st.form("transaction_form"):
         # First row: Date and Time
